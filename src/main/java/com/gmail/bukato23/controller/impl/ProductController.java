@@ -144,7 +144,7 @@ public class ProductController {
                             product.setPrice(price);
                             product.setCategory(productCategory);
                             product.setAvailability(availabilityProduct);
-                            productService.updateUserByAdmin(product);
+                            productService.updateProductByAdmin(product);
                             page = ConstantURL.ALL_PRODUCTS;
                         } else {
                             request.setAttribute(ConstantAttributes.ERROR_WRONG_PRICE, messageManager.

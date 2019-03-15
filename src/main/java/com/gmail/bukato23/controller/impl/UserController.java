@@ -268,7 +268,7 @@ public class UserController {
                 if (Validation.isCorrectPassword(password)) {
                     if (Validation.isCorrectUserName(firstName) && Validation.isCorrectUserName(lastName)) {
                         if (userService.checkIsLoginFree(login) || user.getLogin().equals(login)) {
-                            User updateUser = userService.updateProfileUser(user.getId(), login, password, firstName, lastName);
+                            User updateUser = userService.updateProfileUser(user.getId(), login, BCryptHash.hashPassword(password), firstName, lastName);
                             httpSession.setAttribute(ConstantAttributes.USER, updateUser);
                             page = ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_PROFILE);
                         } else {

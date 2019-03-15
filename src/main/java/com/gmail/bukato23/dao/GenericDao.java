@@ -21,7 +21,7 @@ public interface GenericDao<T extends Identified<PK>, PK extends Serializable> {
      * @return identified entity in DB
      * @throws PersistException should be clarify
      */
-    T persist(T object, Transaction transaction) throws PersistException;
+    T persist(T object) throws PersistException;
 
     /**
      * Get identified entity by PK
@@ -30,7 +30,7 @@ public interface GenericDao<T extends Identified<PK>, PK extends Serializable> {
      * @return identified entity
      * @throws DaoException should be clarify
      */
-    T getByPK(PK id, Transaction transaction) throws DaoException;
+    T getByPK(PK id) throws DaoException;
 
     /**
      * Update identified entity
@@ -38,7 +38,7 @@ public interface GenericDao<T extends Identified<PK>, PK extends Serializable> {
      * @param object identified entity
      * @throws PersistException should be clarify
      */
-    T update(T object, Transaction transaction) throws PersistException;
+    T update(T object) throws PersistException;
 
     /**
      * Delete identified entity
@@ -46,7 +46,7 @@ public interface GenericDao<T extends Identified<PK>, PK extends Serializable> {
      * @param object identified entity
      * @throws PersistException should be clarify
      */
-    void delete(T object, Transaction transaction) throws DaoException;
+    void delete(T object) throws DaoException;
 
     /**
      * Get all identified entity
@@ -54,5 +54,5 @@ public interface GenericDao<T extends Identified<PK>, PK extends Serializable> {
      * @return identified entity
      * @throws DaoException should be clarify
      */
-    List<T> getAll(Transaction transaction) throws DaoException;
+    List<T> getAll() throws DaoException;
 }

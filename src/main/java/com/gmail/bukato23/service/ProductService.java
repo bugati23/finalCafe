@@ -11,7 +11,7 @@ public interface ProductService {
 
     Product getByID(int id) throws ServiceException;
 
-    void updateUserByAdmin(Product product) throws ServiceException;
+    void updateProductByAdmin(Product product) throws ServiceException;
 
     void deleteProduct(Product product) throws ServiceException;
 }

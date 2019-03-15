@@ -99,10 +99,9 @@ public class JdbcDaoFactory implements DaoFactory, TransactionalDaoFactory {
         }
         GenericDao dao = daoCreator.get();
 
-//        return (GenericDao) Proxy.newProxyInstance(dao.getClass().getClassLoader(),
-//                dao.getClass().getInterfaces(),
-//                new DaoInvocationHandler(dao));
-        return dao;
+        return (GenericDao) Proxy.newProxyInstance(dao.getClass().getClassLoader(),
+                dao.getClass().getInterfaces(),
+                new DaoInvocationHandler(dao));
     }
 
     @Override

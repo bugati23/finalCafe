@@ -25,65 +25,66 @@ import java.util.concurrent.locks.ReentrantLock;
  * Implementation of transaction with DAO
  */
 public final class TransactionManager {
-    private static TransactionManager instance;
-    private static Lock lock = new ReentrantLock();
+//    private static TransactionManager instance;
+//    private static Lock lock = new ReentrantLock();
     public static final Logger LOGGER = LogManager.getLogger(TransactionManager.class);
-
+    private Connection proxyConnection;
     public TransactionManager() {
     }
 
-    public Transaction begin() throws TransactionException {
+    public void begin(GenericDao dao, GenericDao... daos) throws DaoException {
         ConnectionPool connectionPool = ConnectionPoolFactory.getInstance().getConnectionPool();
         try {
-            Connection proxyConnection = connectionPool.retrieveConnection();
+            proxyConnection = connectionPool.retrieveConnection();
             proxyConnection.setAutoCommit(false);
-            return new Transaction(proxyConnection);
+            setConnectionWithReflection(dao, proxyConnection);
+            for (GenericDao d : daos) {
+                setConnectionWithReflection(d, proxyConnection);
+            }
+
         } catch (ConnectionPoolException | SQLException e) {
             LOGGER.error(e);
-            throw new TransactionException("Failed to get a connection from CP.", e);
+            throw new DaoException("Failed to get a connection from CP.", e);
         }
     }
 
-    public void end(Transaction transaction) throws TransactionException {
+    public void end() throws DaoException {
         try {
+            proxyConnection.setAutoCommit(true);
             ConnectionPool connectionPool = ConnectionPoolFactory.getInstance().getConnectionPool();
-            connectionPool.putBackConnection(transaction.getProxyConnection());
-            transaction.setProxyConnection(null);
-        } catch (ConnectionPoolException e) {
+            connectionPool.putBackConnection(proxyConnection);
+            proxyConnection = null;
+        } catch (ConnectionPoolException | SQLException e) {
             LOGGER.error(e);
-            throw new TransactionException("Failed to close a connection.", e);
+            throw new DaoException("Failed to close a connection.", e);
         }
     }
 
-    public void commit(Transaction transaction) throws TransactionException {
-        if (!transaction.isReadOnly()) {
-            Connection proxyConnection = transaction.getProxyConnection();
+    public void commit() throws DaoException {
             if (proxyConnection != null) {
                 try {
                     proxyConnection.commit();
                 } catch (SQLException e) {
                     LOGGER.error("SQLException", e);
-                    throw new TransactionException("SQLException", e);
+                    throw new DaoException("Problem with  commit transaction" , e);
                 }
             }
-        }
     }
 
-    public void rollback(Transaction transaction) throws TransactionException {
-        Connection proxyConnection = transaction.getProxyConnection();
+    public void rollback() throws DaoException {
         if (proxyConnection != null) {
             try {
                 proxyConnection.rollback();
             } catch (SQLException e) {
                 LOGGER.error("SQLException", e);
-                throw new TransactionException("SQLException", e);
+                throw new DaoException("Problem with  rollback transaction" , e);
             }
         }
     }
 
 
     static void setConnectionWithReflection(Object dao, Connection connection) throws DaoException {
-        if (!(dao instanceof GenericDao)) {    //change AbstractJdbcDao on GenericDao
+        if (!(dao instanceof AbstractJdbcDao)) {
             throw new DaoException("DAO implementation does not extend AbstractJdbcDao.");
         }
 
@@ -101,18 +102,18 @@ public final class TransactionManager {
         }
     }
 
-    public static TransactionManager getInstance() {
-        if (instance == null) {
-            lock.lock();
-            try {
-                if (instance == null) {
-                    instance = new TransactionManager();
-                }
-
-            } finally {
-                lock.unlock();
-            }
-        }
-        return instance;
-    }
+//    public static TransactionManager getInstance() {
+//        if (instance == null) {
+//            lock.lock();
+//            try {
+//                if (instance == null) {
+//                    instance = new TransactionManager();
+//                }
+//
+//            } finally {
+//                lock.unlock();
+//            }
+//        }
+//        return instance;
+//    }
 }

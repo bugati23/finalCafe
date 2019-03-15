@@ -17,7 +17,7 @@ import java.util.List;
  */
 public abstract class AbstractJdbcDao<T extends Identified<PK>, PK extends Number> implements GenericDao<T, PK> {
     private static final Logger LOGGER = LogManager.getLogger(AbstractJdbcDao.class);
-
+    protected Connection connection;
     protected abstract List<T> parseResultSet(ResultSet rs) throws SQLException;
 
     protected abstract void prepareStatementForInsert(PreparedStatement statement, T object) throws SQLException;
@@ -33,10 +33,10 @@ public abstract class AbstractJdbcDao<T extends Identified<PK>, PK extends Numbe
     public abstract String getUpdateQuery();
 
     public abstract String getDeleteQuery();
-
+    @AutoConnection
     @Override
-    public T getByPK(PK key, Transaction transaction) throws DaoException {
-        try (PreparedStatement ps = transaction.getProxyConnection().prepareStatement(getSelectQueryId())) {
+    public T getByPK(PK key) throws DaoException {
+        try (PreparedStatement ps = connection.prepareStatement(getSelectQueryId())) {
             ps.setInt(1, (Integer) key);
             try (ResultSet rs = ps.executeQuery()) {
                 return parseResultSet(rs).get(0);
@@ -46,22 +46,26 @@ public abstract class AbstractJdbcDao<T extends Identified<PK>, PK extends Numbe
             throw new DaoException("Problem when trying to find entity by id", e);
         }
     }
-
+    @AutoConnection
     @Override
-    public List<T> getAll(Transaction transaction) throws DaoException {
-        try (PreparedStatement ps = transaction.getProxyConnection().prepareStatement(getSelectQuery());
+    public List<T> getAll() throws DaoException {
+        try (PreparedStatement ps = connection.prepareStatement(getSelectQuery());
              ResultSet rs = ps.executeQuery()) {
-            return parseResultSet(rs);
+            List<T> list = parseResultSet(rs);
+            System.out.println(list);
+            System.out.println("------------------------------------------");
+            //return parseResultSet(rs);
+            return list;
         } catch (SQLException e) {
             LOGGER.error("Problem when trying to find all entity");
             throw new DaoException("Problem when trying to find all entity", e);
         }
     }
-
+    @AutoConnection
     @Override
-    public T persist(T object, Transaction transaction) throws PersistException {
+    public T persist(T object) throws PersistException {
         try (PreparedStatement preparedStatement =
-                     transaction.getProxyConnection().prepareStatement(getCreateQuery(), Statement.RETURN_GENERATED_KEYS)) {
+                     connection.prepareStatement(getCreateQuery(), Statement.RETURN_GENERATED_KEYS)) {
             prepareStatementForInsert(preparedStatement, object);
             preparedStatement.executeUpdate();
             try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
@@ -78,11 +82,11 @@ public abstract class AbstractJdbcDao<T extends Identified<PK>, PK extends Numbe
             throw new PersistException(e.getMessage(), e);
         }
     }
-
+    @AutoConnection
     @Override
-    public T update(T object, Transaction transaction) throws PersistException {
+    public T update(T object) throws PersistException {
         try (PreparedStatement preparedStatement =
-                     transaction.getProxyConnection().prepareStatement(getUpdateQuery(), Statement.RETURN_GENERATED_KEYS)) {
+                     connection.prepareStatement(getUpdateQuery(), Statement.RETURN_GENERATED_KEYS)) {
             prepareStatementForUpdate(preparedStatement, object);
             preparedStatement.execute();
             return object;
@@ -92,21 +96,10 @@ public abstract class AbstractJdbcDao<T extends Identified<PK>, PK extends Numbe
             throw new PersistException("Problem when trying to update entity", e);
         }
     }
-
-//    @Override
-//    public void update(T object,Transaction transaction) throws PersistException {
-//        try (PreparedStatement preparedStatement = transaction.getProxyConnection().prepareStatement(getUpdateQuery())) {
-//            prepareStatementForUpdate(preparedStatement, object);
-//            preparedStatement.execute();
-//        } catch (SQLException e) {
-//            LOGGER.error("Problem when trying to create entity");
-//            throw new PersistException("Problem when trying to create entity",e);
-//        }
-//    }
-
+    @AutoConnection
     @Override
-    public void delete(T object, Transaction transaction) throws DaoException {
-        try (PreparedStatement statement = transaction.getProxyConnection().prepareStatement(getDeleteQuery())) {
+    public void delete(T object) throws DaoException {
+        try (PreparedStatement statement = connection.prepareStatement(getDeleteQuery())) {
             statement.setInt(1, (Integer) object.getId());
             statement.executeUpdate();
         } catch (SQLException e) {

@@ -62,7 +62,7 @@ public class FeedbackController {
                 feedback.setReview(review);
                 feedback.setUserId(user.getId());
                 feedbackService.addFeedback(feedback);
-                page = ConstantURL.ALL_FEEDBACKS;
+                page = "redirect " + ConstantURL.ALL_FEEDBACKS;
             } else {
                 request.setAttribute(ConstantAttributes.ERROR_WRONG_REVIEW, messageManager.
                         getMessage(ConstantMessages.PATH_ERROR_WRONG_REVIEW));

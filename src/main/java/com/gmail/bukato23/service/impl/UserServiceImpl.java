@@ -19,239 +19,172 @@ import java.util.List;
  */
 public class UserServiceImpl implements UserService {
     private static final Logger LOGGER = LogManager.getLogger(UserServiceImpl.class);
-    private TransactionManager transactionManager = TransactionManager.getInstance();
 
     @Override
     public User signUp(User user) throws ServiceException {
         DaoFactory daoFactory = FactoryProducer.getDaoFactory(DaoFactoryType.JDBC);
-        Transaction transaction = transactionManager.begin();
         try {
             UserDao userDao = (UserDao) daoFactory.getDao(User.class);
-            userDao.persist(user, transaction);
-            transactionManager.commit(transaction);
+            userDao.persist(user);
             return user;
         } catch (DaoException e) {
-            transactionManager.rollback(transaction);
             LOGGER.error(e);
             throw new ServiceException("Failed to get user DAO. ", e);
-
-        } catch (PersistException e) {
-            transactionManager.rollback(transaction);
+        }
+        catch (PersistException e){
             LOGGER.error(e);
-            throw new ServiceException("Failed to save user. ", e);
-        } finally {
-            transactionManager.end(transaction);
+            throw new ServiceException("Failed to persist user DAO. ", e);
         }
     }
 
     @Override
     public User signIn(String login, String password) throws ServiceException {
         DaoFactory daoFactory = FactoryProducer.getDaoFactory(DaoFactoryType.JDBC);
-        Transaction transaction = transactionManager.begin();
-        transaction.setReadOnly(true);
         try {
             UserDao userDao = (UserDao) daoFactory.getDao(User.class);
-            User user = userDao.getUserByLogin(login, transaction);
-            transactionManager.commit(transaction);
+            User user = userDao.getUserByLogin(login);
             if (user != null && BCryptHash.checkPassword(password, user.getPassword())) {
                 return user;
             }
             return null;
         } catch (DaoException e) {
-            transactionManager.rollback(transaction);
             LOGGER.error(e);
             throw new ServiceException("Failed to get user DAO. ", e);
-        } finally {
-            transactionManager.end(transaction);
         }
     }
 
     @Override
     public boolean checkIsEmailFree(String email) throws ServiceException {
         DaoFactory daoFactory = FactoryProducer.getDaoFactory(DaoFactoryType.JDBC);
-        Transaction transaction = transactionManager.begin();
-        transaction.setReadOnly(true);
         try {
             UserDao userDao = (UserDao) daoFactory.getDao(User.class);
-            User user = userDao.getUserByEmail(email, transaction);
-            transactionManager.commit(transaction);
+            User user = userDao.getUserByEmail(email);
             return user == null;
         } catch (DaoException e) {
-            transactionManager.rollback(transaction);
             LOGGER.error(e);
             throw new ServiceException("Failed to get user DAO. ", e);
-        } finally {
-            transactionManager.end(transaction);
         }
     }
 
     @Override
     public boolean checkIsLoginFree(String login) throws ServiceException {
         DaoFactory daoFactory = FactoryProducer.getDaoFactory(DaoFactoryType.JDBC);
-        Transaction transaction = transactionManager.begin();
-        transaction.setReadOnly(true);
         try {
             UserDao userDao = (UserDao) daoFactory.getDao(User.class);
-            User user = userDao.getUserByLogin(login, transaction);
-            transactionManager.commit(transaction);
+            User user = userDao.getUserByLogin(login);
             return user == null;
         } catch (DaoException e) {
-            transactionManager.rollback(transaction);
             LOGGER.error(e);
             throw new ServiceException("Failed to get user DAO. ", e);
-        } finally {
-            transactionManager.end(transaction);
         }
-
     }
 
     @Override
     public User recoveryPassword(String login, String email) throws ServiceException {
         DaoFactory daoFactory = FactoryProducer.getDaoFactory(DaoFactoryType.JDBC);
-        Transaction transaction = transactionManager.begin();
-        transaction.setReadOnly(true);
         try {
             UserDao userDao = (UserDao) daoFactory.getDao(User.class);
-            User user = userDao.getUserByLogin(login, transaction);
-            transactionManager.commit(transaction);
+            User user = userDao.getUserByLogin(login);
             if (user != null && email.equals(user.getEmail())) {
                 return user;
             }
             return null;
         } catch (DaoException e) {
-            transactionManager.rollback(transaction);
             LOGGER.error(e);
             throw new ServiceException("Failed to get user DAO. ", e);
-        } finally {
-            transactionManager.end(transaction);
         }
     }
 
     @Override
     public void saveNewPassword(String login, String newPassword) throws ServiceException {
         DaoFactory daoFactory = FactoryProducer.getDaoFactory(DaoFactoryType.JDBC);
-        Transaction transaction = transactionManager.begin();
         try {
             UserDao userDao = (UserDao) daoFactory.getDao(User.class);
-            User user = userDao.getUserByLogin(login, transaction);
+            User user = userDao.getUserByLogin(login);
             user.setPassword(newPassword);
-            userDao.update(user, transaction);
-            transactionManager.commit(transaction);
+            userDao.update(user);
         } catch (DaoException e) {
-            transactionManager.rollback(transaction);
             LOGGER.error(e);
             throw new ServiceException("Failed to get user DAO. ", e);
         } catch (PersistException e) {
-            transactionManager.rollback(transaction);
             LOGGER.error(e);
             throw new ServiceException("Failed to update user. ", e);
-        } finally {
-            transactionManager.end(transaction);
         }
     }
 
     @Override
     public User updateProfileUser(int id, String login, String password, String firstName, String lastName) throws ServiceException {
         DaoFactory daoFactory = FactoryProducer.getDaoFactory(DaoFactoryType.JDBC);
-        Transaction transaction = transactionManager.begin();
         try {
             UserDao userDao = (UserDao) daoFactory.getDao(User.class);
-            User user = userDao.getByPK(id, transaction);
+            User user = userDao.getByPK(id);
             user.setLogin(login);
             user.setFirstName(firstName);
             user.setLastName(lastName);
-            if (!user.getPassword().equals(password)) { //////????
+            if (!user.getPassword().equals(password)) {
                 user.setPassword(password);
             }
-            user = userDao.update(user, transaction);
-            transactionManager.commit(transaction);
+            user = userDao.update(user);
             return user;
         } catch (DaoException e) {
-            transactionManager.rollback(transaction);
             LOGGER.error(e);
             throw new ServiceException("Failed to get user DAO. ", e);
         } catch (PersistException e) {
-            transactionManager.rollback(transaction);
             LOGGER.error(e);
             throw new ServiceException("Failed to update user. ", e);
-        } finally {
-            transactionManager.end(transaction);
         }
     }
 
     @Override
     public List<User> getAll() throws ServiceException {
         DaoFactory daoFactory = FactoryProducer.getDaoFactory(DaoFactoryType.JDBC);
-        Transaction transaction = transactionManager.begin();
-        transaction.setReadOnly(true);
         try {
             UserDao userDao = (UserDao) daoFactory.getDao(User.class);
-            List<User> users = userDao.getAll(transaction);
-            transactionManager.commit(transaction);
+            List<User> users = userDao.getAll();
             return users;
         } catch (DaoException e) {
-            transactionManager.rollback(transaction);
             LOGGER.error(e);
             throw new ServiceException("Failed to get user DAO. ", e);
-        } finally {
-            transactionManager.end(transaction);
         }
     }
 
     @Override
     public User getByID(int id) throws ServiceException {
         DaoFactory daoFactory = FactoryProducer.getDaoFactory(DaoFactoryType.JDBC);
-        Transaction transaction = transactionManager.begin();
-        transaction.setReadOnly(true);
         try {
             UserDao userDao = (UserDao) daoFactory.getDao(User.class);
-            User user = userDao.getByPK(id, transaction);
-            transactionManager.commit(transaction);
+            User user = userDao.getByPK(id);
             return user;
         } catch (DaoException e) {
-            transactionManager.rollback(transaction);
             LOGGER.error(e);
             throw new ServiceException("Failed to get user DAO. ", e);
-        } finally {
-            transactionManager.end(transaction);
         }
     }
 
     @Override
     public void updateUserByAdmin(User user) throws ServiceException {
         DaoFactory daoFactory = FactoryProducer.getDaoFactory(DaoFactoryType.JDBC);
-        Transaction transaction = transactionManager.begin();
         try {
             UserDao userDao = (UserDao) daoFactory.getDao(User.class);
-            userDao.update(user, transaction);
-            transactionManager.commit(transaction);
+            userDao.update(user);
         } catch (DaoException e) {
-            transactionManager.rollback(transaction);
             LOGGER.error(e);
             throw new ServiceException("Failed to get user DAO. ", e);
         } catch (PersistException e) {
-            transactionManager.rollback(transaction);
             LOGGER.error(e);
             throw new ServiceException("Failed to update user. ", e);
-        } finally {
-            transactionManager.end(transaction);
         }
     }
 
     @Override
     public void deleteUser(User user) throws ServiceException {
         DaoFactory daoFactory = FactoryProducer.getDaoFactory(DaoFactoryType.JDBC);
-        Transaction transaction = transactionManager.begin();
         try {
             UserDao userDao = (UserDao) daoFactory.getDao(User.class);
-            userDao.delete(user, transaction);
-            transactionManager.commit(transaction);
+            userDao.delete(user);
         } catch (DaoException e) {
-            transactionManager.rollback(transaction);
             LOGGER.error(e);
             throw new ServiceException("Failed to get user DAO. ", e);
-        } finally {
-            transactionManager.end(transaction);
         }
     }
 }

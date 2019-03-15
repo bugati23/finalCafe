@@ -4,7 +4,6 @@ import com.gmail.bukato23.controller.Controller;
 import com.gmail.bukato23.controller.EndpointMethod;
 import com.gmail.bukato23.controller.RequestMappingClass;
 import com.gmail.bukato23.controller.RequestMappingMethod;
-import com.gmail.bukato23.dao.connectionpool.ConnectionPool;
 import com.gmail.bukato23.dao.connectionpool.ConnectionPoolFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -20,7 +19,7 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
-@WebServlet("/")
+@WebServlet("/cafe/*")
 public class DispatcherServlet extends HttpServlet {
 
     private static final Logger LOGGER = LogManager.getLogger(DispatcherServlet.class);
@@ -55,12 +54,18 @@ public class DispatcherServlet extends HttpServlet {
             throws ServletException, IOException {
         try {
             String path = request.getRequestURI();
+            System.out.println(path);
             EndpointMethod endpointMethod = map.get(path);
             if (endpointMethod == null) {
                 LOGGER.error("endpointMethod not found.");
                 throw new ServletException();
             }
             String view = endpointMethod.invoke(request);
+            while (view.startsWith("redirect ")) {
+                path = view.substring("redirect ".length());
+                endpointMethod = map.get(path);
+                view = endpointMethod.invoke(request);
+            }
             RequestDispatcher requestDispatcher = request.getRequestDispatcher(view);
             requestDispatcher.forward(request, response);
         } catch (Exception e) {

@@ -103,10 +103,10 @@ public class UserDaoImpl extends AbstractJdbcDao<User, Integer> implements UserD
         prepareStatementForInsert(statement, user);
         statement.setInt(11, user.getId());
     }
-
+    @AutoConnection
     @Override
-    public User getUserByLogin(String login, Transaction transaction) throws DaoException {
-        try (PreparedStatement ps = transaction.getProxyConnection().prepareStatement(SELECT_USER_BY_LOGIN)) {
+    public User getUserByLogin(String login) throws DaoException {
+        try (PreparedStatement ps = connection.prepareStatement(SELECT_USER_BY_LOGIN)) {
             ps.setString(1, login);
             try (ResultSet rs = ps.executeQuery()) {
                 List<User> users = parseResultSet(rs);
@@ -120,10 +120,10 @@ public class UserDaoImpl extends AbstractJdbcDao<User, Integer> implements UserD
             throw new DaoException("Problem when trying to find entity by login", e);
         }
     }
-
+    @AutoConnection
     @Override
-    public User getUserByEmail(String email, Transaction transaction) throws DaoException {
-        try (PreparedStatement ps = transaction.getProxyConnection().prepareStatement(SELECT_USER_BY_EMAIL)) {
+    public User getUserByEmail(String email) throws DaoException {
+        try (PreparedStatement ps = connection.prepareStatement(SELECT_USER_BY_EMAIL)) {
             ps.setString(1, email);
             try (ResultSet rs = ps.executeQuery()) {
                 List<User> users = parseResultSet(rs);
