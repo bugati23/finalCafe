@@ -3,6 +3,7 @@ package com.gmail.bukato23.util;
 import org.apache.commons.validator.routines.UrlValidator;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 
 public class Validation {
     private static final String CHECK_EMAIL = "[-a-z0-9!#$%&'*+/=?^_`{|}~]+(\\.[-a-z0-9!#$%&'*+/=?^_`{|}~]+)*@" +
@@ -10,6 +11,8 @@ public class Validation {
     private static final String CHECK_PASSWORD = "\\A(?=\\S*?[0-9])(?=\\S*?[a-z])(?=\\S*?[A-Z])\\S{8,60}\\z";
     private static final String CHECK_LOGIN = "^[A-z0-9_-]{4,40}$";
     private static final String CHECK_USER_NAME = "^[A-z]{4,50}$";
+    private static final String CHECK_AMOUNT = "^[1-9]\\d*$";
+    private static final long CHECK_TIME = 7200000;
 
     public static boolean isCorrectEmail(String email) {
         return email.matches(CHECK_EMAIL);
@@ -47,5 +50,11 @@ public class Validation {
         String[] schemes = {"http", "https"}; // DEFAULT schemes = "http", "https", "ftp"
         UrlValidator urlValidator = new UrlValidator(schemes);
         return urlValidator.isValid(url);
+    }
+    public static boolean isCorrectAmount(String amount){
+        return amount.matches(CHECK_AMOUNT);
+    }
+    public static boolean isCorrectTimeReciept(Timestamp order, Timestamp receipt){
+        return receipt.getTime()-order.getTime() >= CHECK_TIME;
     }
 }

@@ -5,7 +5,7 @@
 <fmt:setBundle basename="pageContent"/>
 <html>
 <head>
-	<title>Reviews</title>
+	<title><fmt:message key="label.reviews"/></title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 <!--===============================================================================================-->
@@ -62,30 +62,6 @@
 		<div class="wrap-slick1-dots"></div>
 	</div>
 </section>
-<%--<section class="section-mainmenu p-t-110 p-b-70 bg1-pattern">--%>
-	<%--<div class="container">--%>
-		<%--<div class="row">--%>
-			<%--<div class="col-md-10 col-lg-6 p-r-35 p-r-15-lg m-l-r-auto">--%>
-				<%--<div class="wrap-item-mainmenu p-b-22">--%>
-					<%--<c:forEach var="elem" items="${reviews}" varStatus="status">--%>
-						<%--<div class="item-mainmenu m-b-36">--%>
-							<%--<div class="flex-w flex-b m-b-3">--%>
-								<%--<a  class="name-item-mainmenu txt36">--%>
-									<%--<c:out value="${userFeedback[status.index].login}"/>--%>
-								<%--</a>--%>
-								<%--<div class="line-item-mainmenu bg3-pattern"></div>--%>
-							<%--</div>--%>
-
-							<%--<span class="info-item-mainmenu txt23">--%>
-                            <%--<c:out value="${elem.review}"/>--%>
-                        <%--</span>--%>
-						<%--</div>--%>
-					<%--</c:forEach>--%>
-				<%--</div>--%>
-			<%--</div>--%>
-		<%--</div>--%>
-	<%--</div>--%>
-<%--</section>--%>
 
 
 <section class="section-mainmenu p-t-110 p-b-70 bg1-pattern">

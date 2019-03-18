@@ -17,4 +17,9 @@ public class ConstantAttributes {
     public static final String ERROR_WRONG_IMAGE = "errorWrongImage";
     public static final String ERROR_WRONG_PRICE = "errorWrongPrice";
     public static final String EDIT_PRODUCT = "editProduct";
+    public static final String CART = "cart";
+    public static final String ERROR_WRONG_AMOUNT = "errorWrongAmount";
+    public static final String TOTAL_PRICE = "totalPrice";
+    public static final String ERROR_WRONG_TIME = "errorWrongTime";
+    public static final String ERROR_WRONG_PAYMENT_TYPE = "errorWrongPaymentType";
 }

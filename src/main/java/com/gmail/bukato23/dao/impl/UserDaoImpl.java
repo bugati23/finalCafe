@@ -1,9 +1,10 @@
 package com.gmail.bukato23.dao.impl;
 
 
-import com.gmail.bukato23.dao.*;
+import com.gmail.bukato23.dao.AbstractJdbcDao;
+import com.gmail.bukato23.dao.AutoConnection;
+import com.gmail.bukato23.dao.UserDao;
 import com.gmail.bukato23.dao.exception.DaoException;
-import com.gmail.bukato23.dao.exception.PersistException;
 import com.gmail.bukato23.entity.User;
 import com.gmail.bukato23.entity.UserRole;
 import org.apache.logging.log4j.LogManager;
@@ -103,6 +104,7 @@ public class UserDaoImpl extends AbstractJdbcDao<User, Integer> implements UserD
         prepareStatementForInsert(statement, user);
         statement.setInt(11, user.getId());
     }
+
     @AutoConnection
     @Override
     public User getUserByLogin(String login) throws DaoException {
@@ -120,6 +122,7 @@ public class UserDaoImpl extends AbstractJdbcDao<User, Integer> implements UserD
             throw new DaoException("Problem when trying to find entity by login", e);
         }
     }
+
     @AutoConnection
     @Override
     public User getUserByEmail(String email) throws DaoException {

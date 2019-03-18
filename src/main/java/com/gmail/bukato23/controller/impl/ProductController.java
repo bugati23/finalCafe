@@ -179,8 +179,9 @@ public class ProductController {
             throw new ControllerException(e);
         }
     }
+
     @RequestMappingMethod(path = "/menu")
-    public String showMenu(HttpServletRequest request) throws ControllerException{
+    public String showMenu(HttpServletRequest request) throws ControllerException {
         try {
             List<Product> products = productService.getAll();
             request.setAttribute("products", products);

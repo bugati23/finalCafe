@@ -20,8 +20,7 @@ public class ProductServiceImpl implements ProductService {
         DaoFactory daoFactory = FactoryProducer.getDaoFactory(DaoFactoryType.JDBC);
         try {
             ProductDao productDao = (ProductDao) daoFactory.getDao(Product.class);
-            List<Product> products = productDao.getAll();
-            return products;
+            return productDao.getAll();
         } catch (DaoException e) {
             LOGGER.error(e);
             throw new ServiceException("Failed to get user DAO. ", e);
@@ -48,8 +47,7 @@ public class ProductServiceImpl implements ProductService {
         DaoFactory daoFactory = FactoryProducer.getDaoFactory(DaoFactoryType.JDBC);
         try {
             ProductDao productDao = (ProductDao) daoFactory.getDao(Product.class);
-            Product product = productDao.getByPK(id);
-            return product;
+            return productDao.getByPK(id);
         } catch (DaoException e) {
             LOGGER.error(e);
             throw new ServiceException("Failed to get product DAO. ", e);

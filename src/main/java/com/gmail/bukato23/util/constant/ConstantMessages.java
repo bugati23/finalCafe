@@ -15,4 +15,7 @@ public class ConstantMessages {
     public static final String PATH_ERROR_WRONG_DESCRIPTION = "message.errorWrongDescription";
     public static final String PATH_ERROR_WRONG_IMAGE = "message.errorWrongImage";
     public static final String PATH_ERROR_WRONG_PRICE = "message.errorWrongPrice";
+    public static final String PATH_ERROR_WRONG_AMOUNT = "message.errorWrongAmount";
+    public static final String PATH_ERROR_WRONG_TIME = "message.errorWrongTime";
+    public static final String PATH_ERROR_WRONG_PAYMENT_TYPE = "message.errorWrongPaymentType";
 }

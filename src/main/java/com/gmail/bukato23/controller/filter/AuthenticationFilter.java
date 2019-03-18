@@ -11,7 +11,8 @@ import java.io.IOException;
 @WebFilter(urlPatterns = {"/cafe/user/profile","/cafe/user/editProfile","/cafe/user/editprofileForm","/cafe/user/allUsers",
         "/cafe/user/editUser","/cafe/user/editUserForm","/cafe/user/deleteUser",
         "/cafe/feedback/addReview","/cafe/feedback/addReviewForm",
-        "/cafe/product/allProducts","/cafe/product/addProduct","/cafe/product/addProductForm","/cafe/product/editProduct","/cafe/product/editProductForm","/cafe/product/deleteProduct"},
+        "/cafe/product/allProducts","/cafe/product/addProduct","/cafe/product/addProductForm","/cafe/product/editProduct","/cafe/product/editProductForm","/cafe/product/deleteProduct",
+        "/cafe/order/*"},
         initParams = {@WebInitParam(name = "loginPath", value = "/cafe/user/signin")})
 public class AuthenticationFilter implements Filter {
     private String loginPath;

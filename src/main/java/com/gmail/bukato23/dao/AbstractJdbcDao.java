@@ -18,6 +18,7 @@ import java.util.List;
 public abstract class AbstractJdbcDao<T extends Identified<PK>, PK extends Number> implements GenericDao<T, PK> {
     private static final Logger LOGGER = LogManager.getLogger(AbstractJdbcDao.class);
     protected Connection connection;
+
     protected abstract List<T> parseResultSet(ResultSet rs) throws SQLException;
 
     protected abstract void prepareStatementForInsert(PreparedStatement statement, T object) throws SQLException;
@@ -33,6 +34,7 @@ public abstract class AbstractJdbcDao<T extends Identified<PK>, PK extends Numbe
     public abstract String getUpdateQuery();
 
     public abstract String getDeleteQuery();
+
     @AutoConnection
     @Override
     public T getByPK(PK key) throws DaoException {
@@ -46,21 +48,19 @@ public abstract class AbstractJdbcDao<T extends Identified<PK>, PK extends Numbe
             throw new DaoException("Problem when trying to find entity by id", e);
         }
     }
+
     @AutoConnection
     @Override
     public List<T> getAll() throws DaoException {
         try (PreparedStatement ps = connection.prepareStatement(getSelectQuery());
              ResultSet rs = ps.executeQuery()) {
-            List<T> list = parseResultSet(rs);
-            System.out.println(list);
-            System.out.println("------------------------------------------");
-            //return parseResultSet(rs);
-            return list;
+             return parseResultSet(rs);
         } catch (SQLException e) {
             LOGGER.error("Problem when trying to find all entity");
             throw new DaoException("Problem when trying to find all entity", e);
         }
     }
+
     @AutoConnection
     @Override
     public T persist(T object) throws PersistException {
@@ -82,6 +82,7 @@ public abstract class AbstractJdbcDao<T extends Identified<PK>, PK extends Numbe
             throw new PersistException(e.getMessage(), e);
         }
     }
+
     @AutoConnection
     @Override
     public T update(T object) throws PersistException {
@@ -96,6 +97,7 @@ public abstract class AbstractJdbcDao<T extends Identified<PK>, PK extends Numbe
             throw new PersistException("Problem when trying to update entity", e);
         }
     }
+
     @AutoConnection
     @Override
     public void delete(T object) throws DaoException {

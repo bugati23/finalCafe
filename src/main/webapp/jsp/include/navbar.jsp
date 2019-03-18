@@ -78,7 +78,9 @@
                 <div class="bar flex-w flex-l-m p-r-20">
                     <a href="${pageContext.servletContext.contextPath}/cafe/user/profile"><i class="fa fa-user fa-lg" aria-hidden="true"></i></a>
                     <c:if test="${user!=null}">
-                        <a href="#"><i class="fa fa-shopping-cart m-l-21 fa-lg" aria-hidden="true"></i></a>
+                        <h6 class="m-l-18 fa-lg" aria-hidden="true"> <fmt:message key="label.account"/>: ${user.account} </h6>
+                        <h6 class="m-l-18 fa-lg" aria-hidden="true"> <fmt:message key="label.pointsLoyalty"/>: ${user.pointsLoyalty} </h6>
+                        <a href="${pageContext.servletContext.contextPath}/cafe/order/cart"><i class="fa fa-shopping-cart m-l-21 fa-lg" aria-hidden="true"></i></a>
                         <a href="${pageContext.servletContext.contextPath}/cafe/user/signout"><i class="fa fa-sign-out m-l-21 fa-lg" aria-hidden="true"></i></a>
                     </c:if>
                     <a href="${pageContext.servletContext.contextPath}/cafe/user/langen"><img src="${pageContext.servletContext.contextPath}/assets/images/icons/icons8-great-britain-48.png"></a>

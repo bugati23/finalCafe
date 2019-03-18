@@ -140,8 +140,7 @@ public class UserServiceImpl implements UserService {
         DaoFactory daoFactory = FactoryProducer.getDaoFactory(DaoFactoryType.JDBC);
         try {
             UserDao userDao = (UserDao) daoFactory.getDao(User.class);
-            List<User> users = userDao.getAll();
-            return users;
+            return userDao.getAll();
         } catch (DaoException e) {
             LOGGER.error(e);
             throw new ServiceException("Failed to get user DAO. ", e);
@@ -153,8 +152,7 @@ public class UserServiceImpl implements UserService {
         DaoFactory daoFactory = FactoryProducer.getDaoFactory(DaoFactoryType.JDBC);
         try {
             UserDao userDao = (UserDao) daoFactory.getDao(User.class);
-            User user = userDao.getByPK(id);
-            return user;
+            return userDao.getByPK(id);
         } catch (DaoException e) {
             LOGGER.error(e);
             throw new ServiceException("Failed to get user DAO. ", e);

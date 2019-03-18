@@ -3,8 +3,6 @@ package com.gmail.bukato23.dao.impl;
 
 import com.gmail.bukato23.dao.AbstractJdbcDao;
 import com.gmail.bukato23.dao.GenericDao;
-import com.gmail.bukato23.dao.exception.DaoException;
-import com.gmail.bukato23.dao.exception.PersistException;
 import com.gmail.bukato23.entity.order.Order;
 import com.gmail.bukato23.entity.order.PaymentType;
 import com.gmail.bukato23.entity.order.Rating;

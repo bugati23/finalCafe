@@ -3,12 +3,10 @@ package com.gmail.bukato23.dao.impl;
 
 import com.gmail.bukato23.dao.AbstractJdbcDao;
 import com.gmail.bukato23.dao.GenericDao;
-import com.gmail.bukato23.dao.Transaction;
 import com.gmail.bukato23.dao.connectionpool.ConnectionPool;
 import com.gmail.bukato23.dao.connectionpool.ConnectionPoolException;
 import com.gmail.bukato23.dao.connectionpool.ConnectionPoolFactory;
 import com.gmail.bukato23.dao.exception.DaoException;
-import com.gmail.bukato23.dao.exception.TransactionException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -16,20 +14,18 @@ import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Implementation of transaction with DAO
  */
 public final class TransactionManager {
-//    private static TransactionManager instance;
-//    private static Lock lock = new ReentrantLock();
     public static final Logger LOGGER = LogManager.getLogger(TransactionManager.class);
     private Connection proxyConnection;
+    private List<GenericDao> abstractDaos;
+
     public TransactionManager() {
+        abstractDaos = new ArrayList<>();
     }
 
     public void begin(GenericDao dao, GenericDao... daos) throws DaoException {
@@ -38,8 +34,10 @@ public final class TransactionManager {
             proxyConnection = connectionPool.retrieveConnection();
             proxyConnection.setAutoCommit(false);
             setConnectionWithReflection(dao, proxyConnection);
+            abstractDaos.add(dao);
             for (GenericDao d : daos) {
                 setConnectionWithReflection(d, proxyConnection);
+                abstractDaos.add(d);
             }
 
         } catch (ConnectionPoolException | SQLException e) {
@@ -50,6 +48,9 @@ public final class TransactionManager {
 
     public void end() throws DaoException {
         try {
+            for (GenericDao d : abstractDaos) {
+                setConnectionWithReflection(d, null);
+            }
             proxyConnection.setAutoCommit(true);
             ConnectionPool connectionPool = ConnectionPoolFactory.getInstance().getConnectionPool();
             connectionPool.putBackConnection(proxyConnection);
@@ -61,14 +62,14 @@ public final class TransactionManager {
     }
 
     public void commit() throws DaoException {
-            if (proxyConnection != null) {
-                try {
-                    proxyConnection.commit();
-                } catch (SQLException e) {
-                    LOGGER.error("SQLException", e);
-                    throw new DaoException("Problem with  commit transaction" , e);
-                }
+        if (proxyConnection != null) {
+            try {
+                proxyConnection.commit();
+            } catch (SQLException e) {
+                LOGGER.error("SQLException", e);
+                throw new DaoException("Problem with  commit transaction", e);
             }
+        }
     }
 
     public void rollback() throws DaoException {
@@ -77,7 +78,7 @@ public final class TransactionManager {
                 proxyConnection.rollback();
             } catch (SQLException e) {
                 LOGGER.error("SQLException", e);
-                throw new DaoException("Problem with  rollback transaction" , e);
+                throw new DaoException("Problem with  rollback transaction", e);
             }
         }
     }
@@ -101,19 +102,4 @@ public final class TransactionManager {
             throw new DaoException("Failed to set connection for transactional DAO. ", e);
         }
     }
-
-//    public static TransactionManager getInstance() {
-//        if (instance == null) {
-//            lock.lock();
-//            try {
-//                if (instance == null) {
-//                    instance = new TransactionManager();
-//                }
-//
-//            } finally {
-//                lock.unlock();
-//            }
-//        }
-//        return instance;
-//    }
 }

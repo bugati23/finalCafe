@@ -16,4 +16,10 @@ public class ConstantParametrs {
     public static final String PRICE = "price";
     public static final String CATEGORY_PRODUCT = "categoryProduct";
     public static final String AVAILABILITY_PRODUCT = "availabilityProduct";
+    public static final String PRODUCT_TO_CART = "ProductToCart";
+    public static final String AMOUNT_OF_PRODUCT = "amount";
+    public static final String DELETE_PRODUCT = "deleteProduct";
+    public static final String PAYMENT_TYPE = "paymentType";
+    public static final String TIME_RECEIPT = "timeReceipt";
+    public static final String USE_POINTS = "usePoints";
 }
