@@ -18,4 +18,5 @@ public class ConstantPathPages {
     public static final String PATH_PAGE_MENU = "path.page.menu";
     public static final String PATH_PAGE_CART = "path.page.cart";
     public static final String PATH_PAGE_CHECKOUT = "path.page.checkout";
+    public static final String PATH_PAGE_ALL_ORDERS = "path.page.allOrders";
 }

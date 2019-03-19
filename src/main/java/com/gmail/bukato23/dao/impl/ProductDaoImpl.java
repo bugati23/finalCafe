@@ -12,7 +12,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProductDAOImpl extends AbstractJdbcDao<Product, Integer> implements ProductDao {
+public class ProductDaoImpl extends AbstractJdbcDao<Product, Integer> implements ProductDao {
     private static final String SELECT_ALL_PRODUCTS = "SELECT * FROM product";
 
     private static final String SELECT_PRODUCT_BY_ID_SQL = "SELECT * FROM product WHERE id = ?";
@@ -23,7 +23,7 @@ public class ProductDAOImpl extends AbstractJdbcDao<Product, Integer> implements
 
     private static final String DELETE_PRODUCT = "DELETE FROM product WHERE id = ?";
 
-    public ProductDAOImpl() {
+    public ProductDaoImpl() {
     }
 
     @Override

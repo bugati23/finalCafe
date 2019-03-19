@@ -3,6 +3,7 @@ package com.gmail.bukato23.dao.impl;
 
 import com.gmail.bukato23.dao.AbstractJdbcDao;
 import com.gmail.bukato23.dao.GenericDao;
+import com.gmail.bukato23.dao.OrderDao;
 import com.gmail.bukato23.entity.order.Order;
 import com.gmail.bukato23.entity.order.PaymentType;
 import com.gmail.bukato23.entity.order.Rating;
@@ -14,7 +15,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class OrderImpl extends AbstractJdbcDao<Order, Integer> implements GenericDao<Order, Integer> {
+public class OrderDaoImpl extends AbstractJdbcDao<Order, Integer> implements OrderDao {
     private static final String INSERT_ORDER_SQL =
             "INSERT INTO cafe_order (user_id, payment_type_id, rating_id, status_id, total_amount, pre_oder, time_of_order, time_of_receipt)" +
                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
@@ -26,7 +27,7 @@ public class OrderImpl extends AbstractJdbcDao<Order, Integer> implements Generi
             "UPDATE cafe_order SET user_id = ?, payment_type_id = ?, rating_id = ?, status_id = ?, total_amount = ?, pre_oder = ?, time_of_order = ?, time_of_receipt = ? WHERE id = ?";
     private static final String DELETE_USER = "DELETE FROM cafe_order WHERE id = ?";
 
-    public OrderImpl() {
+    public OrderDaoImpl() {
     }
 
     @Override

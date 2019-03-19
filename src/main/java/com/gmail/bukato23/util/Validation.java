@@ -12,7 +12,8 @@ public class Validation {
     private static final String CHECK_LOGIN = "^[A-z0-9_-]{4,40}$";
     private static final String CHECK_USER_NAME = "^[A-z]{4,50}$";
     private static final String CHECK_AMOUNT = "^[1-9]\\d*$";
-    private static final long CHECK_TIME = 7200000;
+    private static final long CHECK_TIME_TWO_HOURS = 7200000;
+    private static final long PREODER_TIME_FIVE_HOURS = 18000000;
 
     public static boolean isCorrectEmail(String email) {
         return email.matches(CHECK_EMAIL);
@@ -55,6 +56,9 @@ public class Validation {
         return amount.matches(CHECK_AMOUNT);
     }
     public static boolean isCorrectTimeReciept(Timestamp order, Timestamp receipt){
-        return receipt.getTime()-order.getTime() >= CHECK_TIME;
+        return receipt.getTime()-order.getTime() >= CHECK_TIME_TWO_HOURS;
+    }
+    public static boolean isPreOder(Timestamp timeOrder, Timestamp timeReceipt){
+        return timeReceipt.getTime() - timeOrder.getTime() >= PREODER_TIME_FIVE_HOURS;
     }
 }

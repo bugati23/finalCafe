@@ -84,10 +84,10 @@
                             <a href="">Bootply Profile</a>
                         </c:when>
                         <c:otherwise>
-                            <p>SKILLS</p>
                             <a href="${pageContext.servletContext.contextPath}/cafe/user/allUsers"><fmt:message key="label.allUsers"/></a><br/>
                             <a href="${pageContext.servletContext.contextPath}/cafe/product/allProducts"><fmt:message key="label.allProducts"/></a><br/>
                             <a href="${pageContext.servletContext.contextPath}/cafe/product/addProduct"><fmt:message key="label.addProduct"/></a><br/>
+                            <a href="${pageContext.servletContext.contextPath}/cafe/order/allOrders"><fmt:message key="label.allOrders"/></a><br/>
                         </c:otherwise>
                     </c:choose>
                 </div>

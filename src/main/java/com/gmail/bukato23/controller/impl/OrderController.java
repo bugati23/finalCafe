@@ -5,10 +5,11 @@ import com.gmail.bukato23.controller.RequestMappingClass;
 import com.gmail.bukato23.controller.RequestMappingMethod;
 import com.gmail.bukato23.entity.Product;
 import com.gmail.bukato23.entity.User;
+import com.gmail.bukato23.entity.order.Order;
 import com.gmail.bukato23.entity.order.PaymentType;
-import com.gmail.bukato23.service.ProductService;
-import com.gmail.bukato23.service.ServiceException;
-import com.gmail.bukato23.service.ServiceFactory;
+import com.gmail.bukato23.entity.order.Rating;
+import com.gmail.bukato23.entity.order.Status;
+import com.gmail.bukato23.service.*;
 import com.gmail.bukato23.util.Validation;
 import com.gmail.bukato23.util.constant.*;
 import com.gmail.bukato23.util.property.ConfigurationManager;
@@ -21,14 +22,13 @@ import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @RequestMappingClass(path = "/order")
 public class OrderController {
     private ProductService productService = ServiceFactory.getInstance().getProductService();
-
+    private OrderService orderService = ServiceFactory.getInstance().getOrderService();
+    private UserService userService = ServiceFactory.getInstance().getUserService();
     @RequestMappingMethod(path = "/addToCart")
     public String addToCart(HttpServletRequest request) throws ControllerException {
         try {
@@ -112,13 +112,16 @@ public class OrderController {
             User user = (User) httpSession.getAttribute(ConstantAttributes.USER);
             Timestamp timeOrder = new Timestamp(System.currentTimeMillis());
             PaymentType paymentType = PaymentType.fromID(Integer.parseInt(request.getParameter(ConstantParametrs.PAYMENT_TYPE)));
-            DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'hh:mm");
+            System.out.println(request.getParameter(ConstantParametrs.TIME_RECEIPT));
+            DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
             Date date = formatter.parse(request.getParameter(ConstantParametrs.TIME_RECEIPT));
+            System.out.println(date);
             Timestamp timeReceipt = new Timestamp(date.getTime());
+            System.out.println(timeReceipt);
             boolean usePoints = Boolean.parseBoolean(request.getParameter(ConstantParametrs.USE_POINTS));
 
             request.setAttribute(ConstantAttributes.ERROR_WRONG_TIME, null);
-            request.setAttribute(ConstantAttributes.ERROR_WRONG_PAYMENT_TYPE,null);
+            request.setAttribute(ConstantAttributes.ERROR_WRONG_PAYMENT_TYPE, null);
             MessageManager messageManager = MessageManager.defineLocale((String) httpSession.getAttribute(
                     ConstantAttributes.CHANGE_LANGUAGE));
             String page = ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_CHECKOUT);
@@ -127,19 +130,17 @@ public class OrderController {
                 int points = user.getPointsLoyalty();
                 if (usePoints && points != 0) {
                     factor = 1.0 * points / 100;
-                    points = 0;
+                    user.setPointsLoyalty(0);
                 }
-                if(paymentType == PaymentType.ONLINE_ACCOUNT){
-                    if(user.getAccount().compareTo(total.multiply(BigDecimal.valueOf(factor))) >= 0){
-
-                    }
-                    else{
+                if (paymentType == PaymentType.ONLINE_ACCOUNT) {
+                    if (user.getAccount().compareTo(total.multiply(BigDecimal.valueOf(factor))) >= 0) {
+                        page = makeOrderCommon(httpSession, products, user, paymentType, total, timeOrder, timeReceipt);
+                    } else {
                         request.setAttribute(ConstantAttributes.ERROR_WRONG_PAYMENT_TYPE, messageManager
                                 .getMessage(ConstantMessages.PATH_ERROR_WRONG_PAYMENT_TYPE));
                     }
-                }
-                else {
-
+                } else {
+                    page = makeOrderCommon(httpSession, products, user, paymentType, total, timeOrder, timeReceipt);
                 }
 
             } else {
@@ -147,8 +148,52 @@ public class OrderController {
                         .getMessage(ConstantMessages.PATH_ERROR_WRONG_TIME));
             }
             return page;
-        } catch (ParseException e) {
+        } catch (ParseException | ServiceException e) {
             throw new ControllerException(e);
         }
     }
+
+    private String makeOrderCommon(HttpSession httpSession, Map<Product, Integer> products, User user, PaymentType paymentType, BigDecimal total, Timestamp timeOrder, Timestamp timeReceipt) throws ServiceException {
+        Order order = new Order();
+        order.setUserId(user.getId());
+        order.setPaymentType(paymentType);
+        order.setRating(Rating.DEFAULT);
+        order.setStatus(Status.EXPECTS);
+        order.setTotalAmount(total);
+        if (Validation.isPreOder(timeOrder, timeReceipt)) {
+            order.setPreOder(true);
+            user.setPointsLoyalty(user.getPointsLoyalty() + 2);
+        } else {
+            order.setPreOder(false);
+        }
+        order.setDateOrder(timeOrder);
+        order.setDateReceipt(timeReceipt);
+        if (paymentType == PaymentType.ONLINE_ACCOUNT) {
+            user.setAccount(user.getAccount().subtract(total));
+        }
+        user = orderService.makeOrder(order, user, products);
+        httpSession.setAttribute(ConstantAttributes.USER, user);
+        httpSession.setAttribute(ConstantAttributes.CART, null);
+        httpSession.setAttribute(ConstantAttributes.TOTAL_PRICE, null);
+        return ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_PROFILE);
+    }
+
+    @RequestMappingMethod(path = "/allOrders")
+    public String showAllOders(HttpServletRequest request) throws ControllerException{
+        try {
+            List<Order> allOrders = orderService.getAll();
+            List<User> userOrder = new ArrayList<>();
+            for (Order order : allOrders) {
+                User user = userService.getByID(order.getUserId());
+                userOrder.add(user);
+            }
+            request.setAttribute(ConstantParametrs.ALL_ORDERS, allOrders);
+            request.setAttribute(ConstantParametrs.USER_ODER, userOrder);
+            return ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_ALL_ORDERS);
+        }
+        catch (ServiceException e){
+            throw new ControllerException();
+        }
+    }
+
 }

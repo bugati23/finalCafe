@@ -7,6 +7,7 @@ import com.gmail.bukato23.dao.connectionpool.ConnectionPool;
 import com.gmail.bukato23.dao.connectionpool.ConnectionPoolException;
 import com.gmail.bukato23.dao.connectionpool.ConnectionPoolFactory;
 import com.gmail.bukato23.dao.exception.DaoException;
+import com.gmail.bukato23.dao.exception.TransactionManagerException;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -28,7 +29,7 @@ public final class TransactionManager {
         abstractDaos = new ArrayList<>();
     }
 
-    public void begin(GenericDao dao, GenericDao... daos) throws DaoException {
+    public void begin(GenericDao dao, GenericDao... daos) throws TransactionManagerException{
         ConnectionPool connectionPool = ConnectionPoolFactory.getInstance().getConnectionPool();
         try {
             proxyConnection = connectionPool.retrieveConnection();
@@ -40,13 +41,14 @@ public final class TransactionManager {
                 abstractDaos.add(d);
             }
 
-        } catch (ConnectionPoolException | SQLException e) {
+        } catch (ConnectionPoolException | SQLException | DaoException e) {
             LOGGER.error(e);
-            throw new DaoException("Failed to get a connection from CP.", e);
+           // throw new DaoException("Failed to get a connection from CP.", e);
+            throw new TransactionManagerException("Failed to get a connection from CP.", e);
         }
     }
 
-    public void end() throws DaoException {
+    public void end() throws TransactionManagerException {
         try {
             for (GenericDao d : abstractDaos) {
                 setConnectionWithReflection(d, null);
@@ -55,30 +57,33 @@ public final class TransactionManager {
             ConnectionPool connectionPool = ConnectionPoolFactory.getInstance().getConnectionPool();
             connectionPool.putBackConnection(proxyConnection);
             proxyConnection = null;
-        } catch (ConnectionPoolException | SQLException e) {
+        } catch (ConnectionPoolException | SQLException | DaoException e) {
             LOGGER.error(e);
-            throw new DaoException("Failed to close a connection.", e);
+//            throw new DaoException("Failed to close a connection.", e);
+            throw new TransactionManagerException("Failed to close a connection.", e);
         }
     }
 
-    public void commit() throws DaoException {
+    public void commit() throws TransactionManagerException {
         if (proxyConnection != null) {
             try {
                 proxyConnection.commit();
             } catch (SQLException e) {
                 LOGGER.error("SQLException", e);
-                throw new DaoException("Problem with  commit transaction", e);
+//                throw new DaoException("Problem with  commit transaction", e);
+                throw new TransactionManagerException("Problem with  commit transaction", e);
             }
         }
     }
 
-    public void rollback() throws DaoException {
+    public void rollback() throws TransactionManagerException {
         if (proxyConnection != null) {
             try {
                 proxyConnection.rollback();
             } catch (SQLException e) {
                 LOGGER.error("SQLException", e);
-                throw new DaoException("Problem with  rollback transaction", e);
+//                throw new DaoException("Problem with  rollback transaction", e);
+                throw new TransactionManagerException("Problem with  rollback transaction", e);
             }
         }
     }

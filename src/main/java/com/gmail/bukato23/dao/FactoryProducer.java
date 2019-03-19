@@ -40,4 +40,13 @@ public class FactoryProducer {
                 throw new EnumConstantNotPresentException(DaoFactoryType.class, "No such DaoFactory " + type.name());
         }
     }
+    public static TransactionalDaoFactory getTransactionalDaoFactory(DaoFactoryType type) {
+        switch (type) {
+            case JDBC:
+                return JdbcDaoFactory.getInstance();
+
+            default:
+                throw new EnumConstantNotPresentException(DaoFactoryType.class, "No such DaoFactory " + type.name());
+        }
+    }
 }

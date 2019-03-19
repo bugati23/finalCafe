@@ -9,7 +9,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public enum Rating implements Identified<Integer> {
-    ONE(1), TWO(2), THREE(3), FOUR(4), FIVE(5);
+    ONE(1), TWO(2), THREE(3), FOUR(4), FIVE(5),  DEFAULT(6);
     private int id;
 
     Rating(int id) {

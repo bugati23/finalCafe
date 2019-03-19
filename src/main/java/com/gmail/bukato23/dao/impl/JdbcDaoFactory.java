@@ -8,10 +8,7 @@ import com.gmail.bukato23.dao.TransactionalDaoFactory;
 import com.gmail.bukato23.dao.connectionpool.ConnectionPool;
 import com.gmail.bukato23.dao.connectionpool.ConnectionPoolFactory;
 import com.gmail.bukato23.dao.exception.DaoException;
-import com.gmail.bukato23.entity.Feedback;
-import com.gmail.bukato23.entity.Identified;
-import com.gmail.bukato23.entity.Product;
-import com.gmail.bukato23.entity.User;
+import com.gmail.bukato23.entity.*;
 import com.gmail.bukato23.entity.order.Order;
 
 import java.io.Serializable;
@@ -71,9 +68,10 @@ public class JdbcDaoFactory implements DaoFactory, TransactionalDaoFactory {
 
     private JdbcDaoFactory() {
         creators.put(User.class, UserDaoImpl::new);
-        creators.put(Product.class, ProductDAOImpl::new);
+        creators.put(Product.class, ProductDaoImpl::new);
         creators.put(Feedback.class, FeedbackDaoImpl::new);
-        creators.put(Order.class, OrderImpl::new);
+        creators.put(Order.class, OrderDaoImpl::new);
+        creators.put(OrderProduct.class, OrderProductDaoImpl::new);
     }
 
     public static JdbcDaoFactory getInstance() {

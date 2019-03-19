@@ -2,6 +2,7 @@ package com.gmail.bukato23.service;
 
 
 import com.gmail.bukato23.service.impl.FeedbackServiceImpl;
+import com.gmail.bukato23.service.impl.OrderServiceImpl;
 import com.gmail.bukato23.service.impl.ProductServiceImpl;
 import com.gmail.bukato23.service.impl.UserServiceImpl;
 
@@ -25,4 +26,6 @@ public class ServiceFactory {
     public ProductService getProductService(){
         return new ProductServiceImpl();
     }
+    public OrderService getOrderService(){return new OrderServiceImpl();}
 }
+
