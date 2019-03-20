@@ -14,7 +14,7 @@
 <body>
 <form action = "DispatcherServlet" method="post"></form>
 
-<c:redirect url="/cafe/cafe/user/home"> 
+<c:redirect url="/cafe/user/home">
 
 </c:redirect>
 
