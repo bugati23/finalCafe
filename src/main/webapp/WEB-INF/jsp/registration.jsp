@@ -17,7 +17,7 @@
     <link href="${pageContext.servletContext.contextPath}/assets/css/registrationpage.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
-<form id="login" action="${pageContext.servletContext.contextPath}/cafe/cafe/user/signupForm" method="post">
+<form id="login" action="${pageContext.servletContext.contextPath}/cafe/user/signupForm" method="post">
     <h1><fmt:message key="label.registration"/></h1>
     <fieldset id="inputs">
         <input name="login" type="text" value="<c:out value="${formUser.login}"/>" placeholder="<fmt:message key="label.enterLogin"/>" minlength="4" maxlength="40" autofocus required>
@@ -31,8 +31,8 @@
         <input name="lastName" type="text" value="<c:out value="${formUser.lastName}"/>" placeholder="<fmt:message key="label.enterLastName"/>" minlength="4" maxlength="50" required/>
         <label style="color:#721c24">${errorWrongUserName}</label>
         <input id="submit" type="submit" value="<fmt:message key="label.register"/>"/>
-        <a href="${pageContext.servletContext.contextPath}/cafe/cafe/user/langen"><img src="${pageContext.servletContext.contextPath}/assets/images/icons/icons8-great-britain-48.png"></a>
-        <a href="${pageContext.servletContext.contextPath}/cafe/cafe/user/langru"><img src="${pageContext.servletContext.contextPath}/assets/images/icons/icons8-russian-federation-48.png"></a>
+        <a href="${pageContext.servletContext.contextPath}/cafe/user/langen"><img src="${pageContext.servletContext.contextPath}/assets/images/icons/icons8-great-britain-48.png"></a>
+        <a href="${pageContext.servletContext.contextPath}/cafe/user/langru"><img src="${pageContext.servletContext.contextPath}/assets/images/icons/icons8-russian-federation-48.png"></a>
     </fieldset>
 </form>
 </body>

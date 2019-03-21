@@ -81,7 +81,7 @@
                                         </label>
 
                                         <div class="line-item-mainmenu bg3-pattern"></div>
-                                        <form action="${pageContext.servletContext.contextPath}/cafe/cafe/order/deleteProduct" method="post">
+                                        <form action="${pageContext.servletContext.contextPath}/cafe/order/deleteProduct" method="post">
                                             <button type="submit" class="btn3 flex-c-m size18 txt11 trans-0-4 m-10">
                                                 <fmt:message key="label.delete"/>
                                                 <input type="hidden" name="deleteProduct" value="${elem.key.id}">
@@ -101,7 +101,7 @@
                                         <fmt:message key="label.totalPrice"/>: <c:out value="${totalPrice}"/><br>
                                     </label>
                                     <div class="line-item-mainmenu bg3-pattern"></div>
-                                    <form action="${pageContext.servletContext.contextPath}/cafe/cafe/order/checkout">
+                                    <form action="${pageContext.servletContext.contextPath}/cafe/order/checkout">
                                         <button type="submit" class="btn3 flex-c-m size18 txt11 trans-0-4 m-10">
                                             <fmt:message key="label.checkout"/>
                                         </button>

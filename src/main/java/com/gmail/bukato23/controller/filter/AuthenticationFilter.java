@@ -40,6 +40,7 @@ public class AuthenticationFilter implements Filter {
 
     }
 }
+
 //urlPatterns = {"/cafe/user/profile","/cafe/user/editProfile","/cafe/user/editprofileForm","/cafe/user/allUsers",
 //        "/cafe/user/editUser","/cafe/user/editUserForm","/cafe/user/deleteUser",
 //        "/cafe/feedback/addReview","/cafe/feedback/addReviewForm",

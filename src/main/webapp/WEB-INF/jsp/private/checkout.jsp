@@ -54,7 +54,7 @@
                     </h3>
                 </div>
 
-                <form class="wrap-form-booking" action="${pageContext.servletContext.contextPath}/cafe/cafe/order/orderForm" method="post">
+                <form class="wrap-form-booking" action="${pageContext.servletContext.contextPath}/cafe/order/orderForm" method="post">
                     <div class="row">
                         <div class="col-md-6">
                             <span class="txt9">

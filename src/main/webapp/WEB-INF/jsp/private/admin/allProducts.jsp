@@ -70,7 +70,7 @@
                                 </label>
 
                                 <div class="line-item-mainmenu bg3-pattern"></div>
-                                <form action="${pageContext.servletContext.contextPath}/cafe/cafe/product/editProduct">
+                                <form action="${pageContext.servletContext.contextPath}/cafe/product/editProduct">
                                     <button type="submit" class="btn3 flex-c-m size18 txt11 trans-0-4 m-10">
                                         <fmt:message key="label.change"/>
                                         <input type="hidden" name="editProduct" value="${elem.id}">

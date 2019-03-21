@@ -84,7 +84,7 @@
 							<span class="txt22 m-t-20">
 								<c:out value="${elem.price}"/>
 							</span>
-							<form action="${pageContext.servletContext.contextPath}/cafe/cafe/order/addToCart" method="post">
+							<form action="${pageContext.servletContext.contextPath}/cafe/order/addToCart" method="post">
 								<p><fmt:message key="label.amount"/>:</p>
 								<input id="amount" name="amount" type="number" value="1" placeholder="<fmt:message key="label.enterAmount"/>" min="-12" step="1" required>
 								<label style="color:#721c24">${errorWrongAmount}</label>
@@ -136,7 +136,7 @@
                                         <span class="txt22 m-t-20">
 								           <c:out value="${elem.price}"/>
 										 </span>
-										<form action="${pageContext.servletContext.contextPath}/cafe/cafe/order/addToCart" method="post">
+										<form action="${pageContext.servletContext.contextPath}/cafe/order/addToCart" method="post">
 											<p><fmt:message key="label.amount"/>:</p>
 											<input id="amount2" name="amount" type="number" value="1" placeholder="<fmt:message key="label.enterAmount"/>" min="1" step="1" required>
 											<button type="submit" class="btn3 flex-c-m size18 txt11 trans-0-4 m-10">
@@ -187,7 +187,7 @@
                                         <span class="txt22 m-t-20">
 								             <c:out value="${elem.price}"/>
 							             </span>
-										<form action="${pageContext.servletContext.contextPath}/cafe/cafe/order/addToCart" method="post">
+										<form action="${pageContext.servletContext.contextPath}/cafe/order/addToCart" method="post">
 											<p><fmt:message key="label.amount"/>:</p>
 											<input id="amount3" name="amount" type="number" value="1" placeholder="<fmt:message key="label.enterAmount"/>" min="1" step="1" required>
 											<button type="submit" class="btn3 flex-c-m size18 txt11 trans-0-4 m-10">

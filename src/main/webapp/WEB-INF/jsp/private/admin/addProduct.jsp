@@ -17,7 +17,7 @@
     <link href="${pageContext.servletContext.contextPath}/assets/css/registrationpage.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
-<form id="login" action="${pageContext.servletContext.contextPath}/cafe/cafe/product/addProductForm" method="post">
+<form id="login" action="${pageContext.servletContext.contextPath}/cafe/product/addProductForm" method="post">
     <h1><fmt:message key="label.addProduct"/></h1>
     <fieldset id="inputs">
         <input id="title" name="title" type="text" value="<c:out value="${addedProduct.title}"/>" placeholder="<fmt:message key="label.enterTitle"/>" minlength="1" maxlength="50" required>
@@ -36,8 +36,8 @@
         <input type="radio" name="categoryProduct" value="3"> <br> <fmt:message key="label.drink"/><br>
         <input id="submit" type="submit" value="<fmt:message key="label.add"/>"/>
     </fieldset>
-    <a href="${pageContext.servletContext.contextPath}/cafe/cafe/user/langen"><img src="${pageContext.servletContext.contextPath}/assets/images/icons/icons8-great-britain-48.png"></a>
-    <a href="${pageContext.servletContext.contextPath}/cafe/cafe/user/langru"><img src="${pageContext.servletContext.contextPath}/assets/images/icons/icons8-russian-federation-48.png"></a>
+    <a href="${pageContext.servletContext.contextPath}/cafe/user/langen"><img src="${pageContext.servletContext.contextPath}/assets/images/icons/icons8-great-britain-48.png"></a>
+    <a href="${pageContext.servletContext.contextPath}/cafe/user/langru"><img src="${pageContext.servletContext.contextPath}/assets/images/icons/icons8-russian-federation-48.png"></a>
 </form>
 </body>
 </html>

@@ -66,7 +66,7 @@
             </div>
 
             <div class="wrap-btn-booking flex-c-m m-t-13">
-                <button type="submit" formaction="${pageContext.servletContext.contextPath}/cafe/cafe/feedback/addReviewForm" class="btn3 flex-c-m size36 txt11 trans-0-4">
+                <button type="submit" formaction="${pageContext.servletContext.contextPath}/cafe/feedback/addReviewForm" class="btn3 flex-c-m size36 txt11 trans-0-4">
                     <fmt:message key="label.send"/>
                 </button>
             </div>
