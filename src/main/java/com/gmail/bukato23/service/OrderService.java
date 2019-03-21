@@ -10,4 +10,7 @@ import java.util.Map;
 public interface OrderService {
     User makeOrder(Order order, User user, Map<Product,Integer> products) throws ServiceException;
     List<Order> getAll() throws ServiceException;
+    Order getById(int id) throws ServiceException;
+    void updateOrderByAdmin(Order order) throws ServiceException;
+    List<Order> getByUserId(int userId) throws ServiceException;
 }

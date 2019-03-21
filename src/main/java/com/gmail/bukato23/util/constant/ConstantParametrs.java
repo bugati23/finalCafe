@@ -24,4 +24,5 @@ public class ConstantParametrs {
     public static final String USE_POINTS = "usePoints";
     public static final String ALL_ORDERS = "allOrders";
     public static final String USER_ODER = "userOrder";
+    public static final String STATUS_ORDER = "statusOrder";
 }

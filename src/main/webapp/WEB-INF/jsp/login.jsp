@@ -17,7 +17,7 @@
     <link href="${pageContext.servletContext.contextPath}/assets/css/loginpage.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
-<form id="login" action="${pageContext.request.contextPath}/cafe/user/signinForm" method="post">
+<form id="login" action="${pageContext.request.contextPath}/cafe/cafe/user/signinForm" method="post">
     <h1><fmt:message key="label.welcome"/> </h1>
     <label style="color:#721c24">${errorWrongLoginOrPassword}</label>
     <fieldset id="inputs">
@@ -26,10 +26,10 @@
     </fieldset>
     <fieldset id="actions">
         <input type="submit" id="submit" value="<fmt:message key="label.signIn"/>"/>
-        <a href="${pageContext.servletContext.contextPath}/cafe/user/forgotPassword"><fmt:message key="label.forgotPassword"/> </a>
-        <a href="${pageContext.servletContext.contextPath}/cafe/user/signup"><fmt:message key="label.signUp"/></a>
-        <a href="${pageContext.servletContext.contextPath}/cafe/user/langen"><img src="${pageContext.servletContext.contextPath}/assets/images/icons/icons8-great-britain-48.png"></a>
-        <a href="${pageContext.servletContext.contextPath}/cafe/user/langru"><img src="${pageContext.servletContext.contextPath}/assets/images/icons/icons8-russian-federation-48.png"></a>
+        <a href="${pageContext.servletContext.contextPath}/cafe/cafe/user/forgotPassword"><fmt:message key="label.forgotPassword"/> </a>
+        <a href="${pageContext.servletContext.contextPath}/cafe/cafe/user/signup"><fmt:message key="label.signUp"/></a>
+        <a href="${pageContext.servletContext.contextPath}/cafe/cafe/user/langen"><img src="${pageContext.servletContext.contextPath}/assets/images/icons/icons8-great-britain-48.png"></a>
+        <a href="${pageContext.servletContext.contextPath}/cafe/cafe/user/langru"><img src="${pageContext.servletContext.contextPath}/assets/images/icons/icons8-russian-federation-48.png"></a>
     </fieldset>
     <br>
 </form>

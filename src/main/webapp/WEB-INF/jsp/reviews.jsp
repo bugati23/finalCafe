@@ -38,7 +38,7 @@
 <!--===============================================================================================-->
 </head>
 <body class="animsition">
-<jsp:include page="/jsp/include/navbar.jsp" />
+<jsp:include page="/WEB-INF/jsp/include/navbar.jsp" />
 	<!-- Title Page -->
 <section class="section-slide">
 	<div class="wrap-slick1">
@@ -51,7 +51,7 @@
 
 					<div class="wrap-btn-slide1 animated visible-false" data-appear="zoomIn">
 						<!-- Button1 -->
-						<a href="${pageContext.servletContext.contextPath}/cafe/feedback/addReview" class="btn1 flex-c-m size1 txt3 trans-0-4">
+						<a href="${pageContext.servletContext.contextPath}/cafe/cafe/feedback/addReview" class="btn1 flex-c-m size1 txt3 trans-0-4">
 							<fmt:message key="label.leaveReview"/>
 						</a>
 					</div>
@@ -131,6 +131,6 @@
 	<script src="${pageContext.servletContext.contextPath}/assets/js/map-custom.js"></script>
 <!--===============================================================================================-->
 	<script src="${pageContext.servletContext.contextPath}/assets/js/main.js"></script>
-<jsp:include page="/jsp/include/footer.jsp" />
+<jsp:include page="/WEB-INF/jsp/include/footer.jsp" />
 </body>
 </html>

@@ -50,7 +50,7 @@
             <div class="wrap_header trans-0-3">
                 <!-- Logo -->
                 <div class="logo">
-                    <a href="${pageContext.servletContext.contextPath}/cafe/user/home">
+                    <a href="${pageContext.servletContext.contextPath}/cafe/cafe/user/home">
                         <img src="${pageContext.servletContext.contextPath}/assets/images/icons/logo.png" alt="IMG-LOGO" data-logofixed="${pageContext.servletContext.contextPath}/assets/images/icons/logo2.png">
                     </a>
                 </div>
@@ -60,15 +60,15 @@
                     <nav class="menu">
                         <ul class="main_menu">
                             <li>
-                                <a href="${pageContext.servletContext.contextPath}/cafe/user/home"><fmt:message key="label.home"/></a>
+                                <a href="${pageContext.servletContext.contextPath}/cafe/cafe/user/home"><fmt:message key="label.home"/></a>
                             </li>
 
                             <li>
-                                <a href="${pageContext.servletContext.contextPath}/cafe/product/menu"><fmt:message key="label.menu"/></a>
+                                <a href="${pageContext.servletContext.contextPath}/cafe/cafe/product/menu"><fmt:message key="label.menu"/></a>
                             </li>
 
                             <li>
-                                <a href="${pageContext.servletContext.contextPath}/cafe/feedback/reviews"><fmt:message key="label.reviews"/></a>
+                                <a href="${pageContext.servletContext.contextPath}/cafe/cafe/feedback/reviews"><fmt:message key="label.reviews"/></a>
                             </li>
                         </ul>
                     </nav>
@@ -76,15 +76,15 @@
 
                 <!-- Bar -->
                 <div class="bar flex-w flex-l-m p-r-20">
-                    <a href="${pageContext.servletContext.contextPath}/cafe/user/profile"><i class="fa fa-user fa-lg" aria-hidden="true"></i></a>
+                    <a href="${pageContext.servletContext.contextPath}/cafe/cafe/user/profile"><i class="fa fa-user fa-lg" aria-hidden="true"></i></a>
                     <c:if test="${user!=null}">
                         <h6 class="m-l-18 fa-lg" aria-hidden="true"> <fmt:message key="label.account"/>: ${user.account} </h6>
                         <h6 class="m-l-18 fa-lg" aria-hidden="true"> <fmt:message key="label.pointsLoyalty"/>: ${user.pointsLoyalty} </h6>
-                        <a href="${pageContext.servletContext.contextPath}/cafe/order/cart"><i class="fa fa-shopping-cart m-l-21 fa-lg" aria-hidden="true"></i></a>
-                        <a href="${pageContext.servletContext.contextPath}/cafe/user/signout"><i class="fa fa-sign-out m-l-21 fa-lg" aria-hidden="true"></i></a>
+                        <a href="${pageContext.servletContext.contextPath}/cafe/cafe/order/cart"><i class="fa fa-shopping-cart m-l-21 fa-lg" aria-hidden="true"></i></a>
+                        <a href="${pageContext.servletContext.contextPath}/cafe/cafe/user/signout"><i class="fa fa-sign-out m-l-21 fa-lg" aria-hidden="true"></i></a>
                     </c:if>
-                    <a href="${pageContext.servletContext.contextPath}/cafe/user/langen"><img src="${pageContext.servletContext.contextPath}/assets/images/icons/icons8-great-britain-48.png"></a>
-                    <a href="${pageContext.servletContext.contextPath}/cafe/user/langru"><img src="${pageContext.servletContext.contextPath}/assets/images/icons/icons8-russian-federation-48.png"></a>
+                    <a href="${pageContext.servletContext.contextPath}/cafe/cafe/user/langen"><img src="${pageContext.servletContext.contextPath}/assets/images/icons/icons8-great-britain-48.png"></a>
+                    <a href="${pageContext.servletContext.contextPath}/cafe/cafe/user/langru"><img src="${pageContext.servletContext.contextPath}/assets/images/icons/icons8-russian-federation-48.png"></a>
                 </div>
             </div>
         </div>

@@ -67,10 +67,10 @@
                 </div>
             </div>
             <div style="float: right">
-                <a href="${pageContext.servletContext.contextPath}/cafe/user/editProfile"><fmt:message key="label.editProfile"/> </a>
-                <a href="${pageContext.servletContext.contextPath}/cafe/user/langen"><img src="${pageContext.servletContext.contextPath}/assets/images/icons/icons8-great-britain-48.png"></a>
-                <a href="${pageContext.servletContext.contextPath}/cafe/user/langru"><img src="${pageContext.servletContext.contextPath}/assets/images/icons/icons8-russian-federation-48.png"></a>
-                <a href="${pageContext.servletContext.contextPath}/cafe/user/home"><i class="fa fa-times" aria-hidden="true"></i></a>
+                <a href="${pageContext.servletContext.contextPath}/cafe/cafe/user/editProfile"><fmt:message key="label.editProfile"/> </a>
+                <a href="${pageContext.servletContext.contextPath}/cafe/cafe/user/langen"><img src="${pageContext.servletContext.contextPath}/assets/images/icons/icons8-great-britain-48.png"></a>
+                <a href="${pageContext.servletContext.contextPath}/cafe/cafe/user/langru"><img src="${pageContext.servletContext.contextPath}/assets/images/icons/icons8-russian-federation-48.png"></a>
+                <a href="${pageContext.servletContext.contextPath}/cafe/cafe/user/home"><i class="fa fa-times" aria-hidden="true"></i></a>
             </div>
         </div>
         <div class="row">
@@ -78,16 +78,14 @@
                 <div class="profile-work">
                     <c:choose>
                         <c:when test="${user.role == 'USER'}">
-                            <p>WORK LINK</p>
-                            <a href="">Website Link</a><br/>
-                            <a href="">Bootsnipp Profile</a><br/>
-                            <a href="">Bootply Profile</a>
+                            <a href="${pageContext.servletContext.contextPath}/cafe/cafe/order/myOrders"><fmt:message key="label.myOrders"/> </a><br/>
                         </c:when>
                         <c:otherwise>
-                            <a href="${pageContext.servletContext.contextPath}/cafe/user/allUsers"><fmt:message key="label.allUsers"/></a><br/>
-                            <a href="${pageContext.servletContext.contextPath}/cafe/product/allProducts"><fmt:message key="label.allProducts"/></a><br/>
-                            <a href="${pageContext.servletContext.contextPath}/cafe/product/addProduct"><fmt:message key="label.addProduct"/></a><br/>
-                            <a href="${pageContext.servletContext.contextPath}/cafe/order/allOrders"><fmt:message key="label.allOrders"/></a><br/>
+                            <a href="${pageContext.servletContext.contextPath}/cafe/cafe/order/myOrders"><fmt:message key="label.myOrders"/> </a><br/>
+                            <a href="${pageContext.servletContext.contextPath}/cafe/cafe/user/allUsers"><fmt:message key="label.allUsers"/></a><br/>
+                            <a href="${pageContext.servletContext.contextPath}/cafe/cafe/product/allProducts"><fmt:message key="label.allProducts"/></a><br/>
+                            <a href="${pageContext.servletContext.contextPath}/cafe/cafe/product/addProduct"><fmt:message key="label.addProduct"/></a><br/>
+                            <a href="${pageContext.servletContext.contextPath}/cafe/cafe/order/allOrders"><fmt:message key="label.allOrders"/></a><br/>
                         </c:otherwise>
                     </c:choose>
                 </div>

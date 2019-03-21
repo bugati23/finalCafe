@@ -27,16 +27,22 @@ public class UserController {
 
     @RequestMappingMethod(path = "/profile")
     public String profile(HttpServletRequest request) {
+        HttpSession httpSession = request.getSession();
+        httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,"/cafe/user/profile");
         return ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_PROFILE);
     }
 
     @RequestMappingMethod(path = "/home")
     public String home(HttpServletRequest request) {
+        HttpSession httpSession = request.getSession();
+        httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,"/cafe/user/home");
         return ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_HOME);
     }
 
     @RequestMappingMethod(path = "/signin")
     public String signIn(HttpServletRequest request) {
+        HttpSession httpSession = request.getSession();
+        httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,"/cafe/user/signin");
         return ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_LOGIN);
     }
 
@@ -75,6 +81,8 @@ public class UserController {
 
     @RequestMappingMethod(path = "/signup")
     public String signUp(HttpServletRequest request) {
+        HttpSession httpSession = request.getSession();
+        httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,"/cafe/user/signup");
         return ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_REGISTRATION);
     }
 
@@ -154,6 +162,8 @@ public class UserController {
 
     @RequestMappingMethod(path = "/forgotPassword")
     public String forgotPassword(HttpServletRequest request) {
+        HttpSession httpSession = request.getSession();
+        httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,"/cafe/user/forgotPassword");
         return ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_RECOVERY_PASSWORD);
     }
 
@@ -219,18 +229,24 @@ public class UserController {
     public String setEnLang(HttpServletRequest request) {
         HttpSession session = request.getSession(true);
         session.setAttribute("changeLanguage", ConstantLocales.ENGLISH_LOCALE);
-        return ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_HOME);
+        String currentGetPage = (String)session.getAttribute(ConstantAttributes.CURRENT_GET_PAGE);
+        //return ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_HOME);
+        return "redirect " + currentGetPage;
     }
 
     @RequestMappingMethod(path = "/langru")
     public String setRuLang(HttpServletRequest request) {
         HttpSession session = request.getSession(true);
         session.setAttribute("changeLanguage", ConstantLocales.RUSSIAN_LOCALE);
-        return ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_HOME);
+        String currentGetPage = (String)session.getAttribute(ConstantAttributes.CURRENT_GET_PAGE);
+        //return ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_HOME);
+        return "redirect " + currentGetPage;
     }
 
     @RequestMappingMethod(path = "/editProfile")
     public String editProfile(HttpServletRequest request) {
+        HttpSession httpSession = request.getSession();
+        httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,"/cafe/user/editProfile");
         return ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_EDIT_PROFILE);
     }
 
@@ -296,6 +312,8 @@ public class UserController {
     @RequestMappingMethod(path = "/allUsers")
     public String showAllUsers(HttpServletRequest request) throws ControllerException {
         try {
+            HttpSession httpSession = request.getSession();
+            httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,"/cafe/user/allUsers");
             List<User> users = userService.getAll();
             request.setAttribute("users", users);
             return ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_ALL_USERS);
@@ -307,9 +325,10 @@ public class UserController {
     @RequestMappingMethod(path = "/editUser")
     public String editUser(HttpServletRequest request) throws ControllerException {
         try {
+            HttpSession httpSession = request.getSession();
+            httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,"/cafe/user/editUser");
             int userId = Integer.parseInt(request.getParameter(ConstantAttributes.EDIT_USER));
             User editUser = userService.getByID(userId);
-            HttpSession httpSession = request.getSession();
             httpSession.setAttribute(ConstantAttributes.EDIT_USER, editUser);
             return ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_EDIT_USER);
         } catch (ServiceException e) {
@@ -363,5 +382,17 @@ public class UserController {
         } catch (Exception e) {
             throw new ControllerException(e);
         }
+    }
+    @RequestMappingMethod(path = "/blocking")
+    public String showBlockingMessage(HttpServletRequest request) throws ControllerException{
+        HttpSession httpSession = request.getSession();
+        httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,"/cafe/user/blocking");
+        return ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_BLOCKING);
+    }
+    @RequestMappingMethod(path = "/authorization")
+    public String showAuthorizationMessage(HttpServletRequest request) throws ControllerException{
+        HttpSession httpSession = request.getSession();
+        httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,"/cafe/user/authorization");
+        return ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_AUTHORIZATION);
     }
 }

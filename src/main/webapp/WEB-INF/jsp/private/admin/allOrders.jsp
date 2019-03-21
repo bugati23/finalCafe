@@ -1,8 +1,8 @@
 <%--
   Created by IntelliJ IDEA.
   User: User
-  Date: 11.03.2019
-  Time: 18:55
+  Date: 20.03.2019
+  Time: 1:46
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
@@ -12,7 +12,7 @@
 <fmt:setBundle basename="pageContent"/>
 <html>
 <head>
-    <title>Reviews</title>
+    <title><fmt:message key="label.allOrders"/></title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!--===============================================================================================-->
@@ -45,44 +45,96 @@
     <!--===============================================================================================-->
 </head>
 <body class="animsition">
-<jsp:include page="/jsp/include/navbar.jsp" />
-<section class="bg-title-page flex-c-m p-t-160 p-b-80 p-l-15 p-r-15" style="background-image: url(${pageContext.servletContext.contextPath}/assets/images/background1.jpg);">
+<jsp:include page="/WEB-INF/jsp/include/navbar.jsp" />
+<!-- Title Page -->
+<section class="bg-title-page flex-c-m p-t-160 p-b-80 p-l-15 p-r-15" style="background-image: url(${pageContext.servletContext.contextPath}/assets/images/background2.jpg);">
     <h2 class="tit6 t-center">
-        <fmt:message key="label.review"/>
+        <fmt:message key="label.allOrders"/>
     </h2>
 </section>
 
-<section class="section-contact bg1-pattern p-t-90 p-b-113">
+
+<section class="section-mainmenu p-t-110 p-b-70 bg1-pattern">
     <div class="container">
-        <form class="wrap-form-reservation size22 m-l-r-auto" method="post">
-            <div class="row">
-                <div class="col-12">
-                    <span class="txt9">
-							<fmt:message key="label.review"/>
-						</span>
-                    <label style="color:#721c24">${errorWrongReview}</label>
-                    <textarea class="bo-rad-10 size35 bo2 txt10 p-l-20 p-t-15 m-b-10 m-t-3" name="review"  placeholder="<fmt:message key="label.review"/>" minlength="1" maxlength="500"><c:out value="${review}" /></textarea>
+        <div class="row">
+            <div class="col-md-10 col-lg-6 p-r-35 p-r-15-lg m-l-r-auto">
+                <div class="wrap-item-mainmenu p-b-22">
+                    <h3 class="tit-mainmenu tit10 p-b-25">
+                        <fmt:message key="label.orders"/>:
+                    </h3>
+                    <c:forEach var="elem" items="${allOrders}" varStatus="status">
+                        <div class="item-mainmenu m-b-36">
+                            <div class="flex-w flex-b m-b-3">
+                                <a class="name-item-mainmenu txt36">
+                                    <c:out value="${userOrder[status.index].login}"/>: <fmt:message key="label.orderNoun"/> № <c:out value="${elem.id}"/>
+                                </a>
+
+                                <div class="line-item-mainmenu bg3-pattern"></div>
+                                <form action="${pageContext.servletContext.contextPath}/cafe/cafe/order/editOrder">
+                                    <button type="submit" class="btn3 flex-c-m size18 txt11 trans-0-4 m-10">
+                                        <fmt:message key="label.changeStatus"/>
+                                        <input type="hidden" name="editOrder" value="${elem.id}">
+                                    </button>
+                                </form>
+                            </div>
+                            <span class="info-item-mainmenu txt23">
+                                <fmt:message key="label.paymentType"/>:
+                                <c:choose>
+                                    <c:when test="${elem.paymentType == 'CASH'}">
+                                        <fmt:message key="label.cash"/>
+                                        <br>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <fmt:message key="label.onlineCash"/>
+                                        <br>
+                                    </c:otherwise>
+                                </c:choose>
+                                <fmt:message key="label.status"/>:
+                                <c:choose>
+                                    <c:when test="${elem.status == 'EXPECTS'}">
+                                        <fmt:message key="label.expects"/>
+                                        <br>
+                                    </c:when>
+                                    <c:when test="${elem.status == 'CLOSED'}">
+                                        <fmt:message key="label.closed"/>
+                                        <br>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <fmt:message key="label.expired"/>
+                                        <br>
+                                    </c:otherwise>
+                                </c:choose>
+                                <fmt:message key="label.totalPrice"/>: <c:out value="${elem.totalAmount}"/><br>
+                                <fmt:message key="label.preoder"/>:
+                                <c:choose>
+                                    <c:when test="${elem.preOder == true}">
+                                        <fmt:message key="label.yes"/>
+                                        <br>
+                                    </c:when>
+                                    <c:otherwise>
+                                        <fmt:message key="label.no"/>
+                                        <br>
+                                    </c:otherwise>
+                                </c:choose>
+                                <fmt:message key="label.timeOrder"/>: <c:out value="${elem.dateOrder}"/><br>
+                                <fmt:message key="label.timeReciept"/>: <c:out value="${elem.dateReceipt}"/><br>
+                                <fmt:message key="label.rating"/>: <c:out value="${elem.rating}"/><br>
+                        </span>
+                        </div>
+                    </c:forEach>
                 </div>
             </div>
-
-            <div class="wrap-btn-booking flex-c-m m-t-13">
-                <button type="submit" formaction="${pageContext.servletContext.contextPath}/cafe/feedback/addReviewForm" class="btn3 flex-c-m size36 txt11 trans-0-4">
-                    <fmt:message key="label.send"/>
-                </button>
-            </div>
-        </form>
+        </div>
     </div>
 </section>
+
+
 <!-- Back to top -->
 <div class="btn-back-to-top bg0-hov" id="myBtn">
 		<span class="symbol-btn-back-to-top">
 			<i class="fa fa-angle-double-up" aria-hidden="true"></i>
 		</span>
 </div>
-
-<!-- Container Selection1 -->
-<div id="dropDownSelect1"></div>
-
 
 
 <!--===============================================================================================-->
@@ -110,10 +162,7 @@
 <!--===============================================================================================-->
 <script type="text/javascript" src="${pageContext.servletContext.contextPath}/assets/vendor/lightbox2/js/lightbox.min.js"></script>
 <!--===============================================================================================-->
-<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAKFWBqlKAGCeS1rMVoaNlwyayu0e0YRes"></script>
-<script src="${pageContext.servletContext.contextPath}/assets/js/map-custom.js"></script>
-<!--===============================================================================================-->
 <script src="${pageContext.servletContext.contextPath}/assets/js/main.js"></script>
-<jsp:include page="/jsp/include/footer.jsp" />
+<jsp:include page="/WEB-INF/jsp/include/footer.jsp" />
 </body>
 </html>

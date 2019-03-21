@@ -27,6 +27,8 @@ public class FeedbackController {
     public String reviews(HttpServletRequest request) throws ControllerException {
         UserService userService = ServiceFactory.getInstance().getUserService();
         try {
+            HttpSession httpSession = request.getSession();
+            httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,"/cafe/feedback/reviews");
             List<User> userFeedback = new ArrayList<>();
             List<Feedback> reviews = feedbackService.getAll();
             for (Feedback feedback : reviews) {
@@ -44,6 +46,8 @@ public class FeedbackController {
 
     @RequestMappingMethod(path = "/addReview")
     public String addreview(HttpServletRequest request) {
+        HttpSession httpSession = request.getSession();
+        httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,"/cafe/feedback/addReview");
         return ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_ADD_REVIEW);
     }
 

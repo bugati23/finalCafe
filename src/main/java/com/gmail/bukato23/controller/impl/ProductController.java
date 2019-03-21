@@ -25,6 +25,8 @@ public class ProductController {
     @RequestMappingMethod(path = "/allProducts")
     public String showAllProducts(HttpServletRequest request) throws ControllerException {
         try {
+            HttpSession httpSession = request.getSession();
+            httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,"/cafe/product/allProducts");
             List<Product> products = productService.getAll();
             request.setAttribute("products", products);
             return ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_ALL_PRODUCTS);
@@ -35,6 +37,8 @@ public class ProductController {
 
     @RequestMappingMethod(path = "/addProduct")
     public String addProduct(HttpServletRequest request) {
+        HttpSession httpSession = request.getSession();
+        httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,"/cafe/product/addProduct");
         return ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_ADD_PRODUCT);
     }
 
@@ -95,9 +99,10 @@ public class ProductController {
     @RequestMappingMethod(path = "/editProduct")
     public String editProduct(HttpServletRequest request) throws ControllerException {
         try {
+            HttpSession httpSession = request.getSession();
+            httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,"/cafe/product/editProduct");
             int productId = Integer.parseInt(request.getParameter(ConstantAttributes.EDIT_PRODUCT));
             Product editProduct = productService.getByID(productId);
-            HttpSession httpSession = request.getSession();
             httpSession.setAttribute(ConstantAttributes.EDIT_PRODUCT, editProduct);
             return ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_EDIT_PRODUCT);
         } catch (ServiceException e) {
@@ -145,7 +150,7 @@ public class ProductController {
                             product.setCategory(productCategory);
                             product.setAvailability(availabilityProduct);
                             productService.updateProductByAdmin(product);
-                            page = ConstantURL.ALL_PRODUCTS;
+                            page = "redirect" + ConstantURL.ALL_PRODUCTS;
                         } else {
                             request.setAttribute(ConstantAttributes.ERROR_WRONG_PRICE, messageManager.
                                     getMessage(ConstantMessages.PATH_ERROR_WRONG_PRICE));
@@ -183,6 +188,8 @@ public class ProductController {
     @RequestMappingMethod(path = "/menu")
     public String showMenu(HttpServletRequest request) throws ControllerException {
         try {
+            HttpSession httpSession = request.getSession();
+            httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,"/cafe/product/menu");
             List<Product> products = productService.getAll();
             request.setAttribute("products", products);
             return ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_MENU);

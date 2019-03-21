@@ -69,6 +69,7 @@ public class DispatcherServlet extends HttpServlet {
             requestDispatcher.forward(request, response);
         } catch (Exception e) {
             LOGGER.error(e);
+            throw  new RuntimeException();
         }
     }
 
@@ -88,7 +89,7 @@ public class DispatcherServlet extends HttpServlet {
                     RequestMappingMethod requestMappingMethod = method.getAnnotation(RequestMappingMethod.class);
                     methodMapping = requestMappingMethod.path();
                     urlToEndpointMethodMap.put(
-                            servletMapping + classMapping + methodMapping,
+                            servletMapping + servletMapping + classMapping + methodMapping, // убрать 1 servletMapping
                             new EndpointMethod(method, controller)
                     );
                 }

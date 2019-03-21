@@ -30,4 +30,25 @@
     <servlet-name>default</servlet-name>
     <url-pattern>*.png</url-pattern>
   </servlet-mapping>
+  <error-page>
+    <exception-type>java.lang.RuntimeException</exception-type>
+    <location>/WEB-INF/jsp/error.jsp</location>
+  </error-page>
+
+  <filter-mapping>
+    <filter-name>authentication</filter-name>
+    <url-pattern/>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>encoding</filter-name>
+    <url-pattern/>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>blocking</filter-name>
+    <url-pattern/>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>authorization</filter-name>
+    <url-pattern/>
+  </filter-mapping>
 </web-app>

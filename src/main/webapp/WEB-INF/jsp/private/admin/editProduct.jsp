@@ -17,7 +17,7 @@
     <link href="${pageContext.servletContext.contextPath}/assets/css/registrationpage.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
-<form id="login" action="${pageContext.servletContext.contextPath}/cafe/product/editProductForm" method="post">
+<form id="login" action="${pageContext.servletContext.contextPath}/cafe/cafe/product/editProductForm" method="post">
     <h1><fmt:message key="label.editProduct"/></h1>
     <fieldset id="inputs">
         <input id="title" name="title" type="text" value="<c:out value="${editProduct.title}"/>" placeholder="<fmt:message key="label.enterTitle"/>" minlength="1" maxlength="50" required>
@@ -59,9 +59,9 @@
         </c:choose>
         <input id="submit" type="submit" value="<fmt:message key="label.change"/>"/>
     </fieldset>
-    <a href="${pageContext.servletContext.contextPath}/cafe/product/deleteProduct"><fmt:message key="label.delete"/> </a>
-    <a href="${pageContext.servletContext.contextPath}/cafe/user/langen"><img src="${pageContext.servletContext.contextPath}/assets/images/icons/icons8-great-britain-48.png"></a>
-    <a href="${pageContext.servletContext.contextPath}/cafe/user/langru"><img src="${pageContext.servletContext.contextPath}/assets/images/icons/icons8-russian-federation-48.png"></a>
+    <a href="${pageContext.servletContext.contextPath}/cafe/cafe/product/deleteProduct"><fmt:message key="label.delete"/> </a>
+    <a href="${pageContext.servletContext.contextPath}/cafe/cafe/user/langen"><img src="${pageContext.servletContext.contextPath}/assets/images/icons/icons8-great-britain-48.png"></a>
+    <a href="${pageContext.servletContext.contextPath}/cafe/cafe/user/langru"><img src="${pageContext.servletContext.contextPath}/assets/images/icons/icons8-russian-federation-48.png"></a>
 </form>
 </body>
 </html>

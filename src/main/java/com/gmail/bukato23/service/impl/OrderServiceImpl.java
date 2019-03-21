@@ -55,6 +55,21 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public void updateOrderByAdmin(Order order) throws ServiceException {
+        DaoFactory daoFactory = FactoryProducer.getDaoFactory(DaoFactoryType.JDBC);
+        try {
+            OrderDao orderDao = (OrderDao) daoFactory.getDao(Order.class);
+            orderDao.update(order);
+        } catch (DaoException e) {
+            LOGGER.error(e);
+            throw new ServiceException("Failed to get order DAO. ", e);
+        } catch (PersistException e) {
+            LOGGER.error(e);
+            throw new ServiceException("Failed to update order. ", e);
+        }
+    }
+
+    @Override
     public List<Order> getAll() throws ServiceException {
         DaoFactory daoFactory = FactoryProducer.getDaoFactory(DaoFactoryType.JDBC);
         try {
@@ -62,7 +77,31 @@ public class OrderServiceImpl implements OrderService {
             return orderDao.getAll();
         } catch (DaoException e) {
             LOGGER.error(e);
-            throw new ServiceException("Failed to get user DAO. ", e);
+            throw new ServiceException("Failed to get order DAO. ", e);
+        }
+    }
+
+    @Override
+    public Order getById(int id) throws ServiceException {
+            DaoFactory daoFactory = FactoryProducer.getDaoFactory(DaoFactoryType.JDBC);
+            try {
+                OrderDao orderDao = (OrderDao) daoFactory.getDao(Order.class);
+                return orderDao.getByPK(id);
+            } catch (DaoException e) {
+                LOGGER.error(e);
+                throw new ServiceException("Failed to get order DAO. ", e);
+            }
+    }
+
+    @Override
+    public List<Order> getByUserId(int userId) throws ServiceException {
+        DaoFactory daoFactory = FactoryProducer.getDaoFactory(DaoFactoryType.JDBC);
+        try {
+            OrderDao orderDao = (OrderDao) daoFactory.getDao(Order.class);
+            return orderDao.getByUserId(userId);
+        } catch (DaoException e) {
+            LOGGER.error(e);
+            throw new ServiceException("Failed to get order DAO. ", e);
         }
     }
 }

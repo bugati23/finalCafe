@@ -5,7 +5,7 @@
 <fmt:setBundle basename="pageContent"/>
 <html>
 <head>
-	<title>Menu</title>
+	<title><fmt:message key="label.menu"/> </title>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 <!--===============================================================================================-->
@@ -38,7 +38,7 @@
 <!--===============================================================================================-->
 </head>
 <body class="animsition">
-<jsp:include page="/jsp/include/navbar.jsp" />
+<jsp:include page="/WEB-INF/jsp/include/navbar.jsp" />
 	<!-- Title Page -->
 	<section class="bg-title-page flex-c-m p-t-160 p-b-80 p-l-15 p-r-15" style="background-image: url(${pageContext.servletContext.contextPath}/assets/images/background1.jpg);">
 		<h2 class="tit6 t-center">
@@ -84,7 +84,7 @@
 							<span class="txt22 m-t-20">
 								<c:out value="${elem.price}"/>
 							</span>
-							<form action="${pageContext.servletContext.contextPath}/cafe/order/addToCart" method="post">
+							<form action="${pageContext.servletContext.contextPath}/cafe/cafe/order/addToCart" method="post">
 								<p><fmt:message key="label.amount"/>:</p>
 								<input id="amount" name="amount" type="number" value="1" placeholder="<fmt:message key="label.enterAmount"/>" min="-12" step="1" required>
 								<label style="color:#721c24">${errorWrongAmount}</label>
@@ -136,7 +136,7 @@
                                         <span class="txt22 m-t-20">
 								           <c:out value="${elem.price}"/>
 										 </span>
-										<form action="${pageContext.servletContext.contextPath}/cafe/order/addToCart" method="post">
+										<form action="${pageContext.servletContext.contextPath}/cafe/cafe/order/addToCart" method="post">
 											<p><fmt:message key="label.amount"/>:</p>
 											<input id="amount2" name="amount" type="number" value="1" placeholder="<fmt:message key="label.enterAmount"/>" min="1" step="1" required>
 											<button type="submit" class="btn3 flex-c-m size18 txt11 trans-0-4 m-10">
@@ -187,7 +187,7 @@
                                         <span class="txt22 m-t-20">
 								             <c:out value="${elem.price}"/>
 							             </span>
-										<form action="${pageContext.servletContext.contextPath}/cafe/order/addToCart" method="post">
+										<form action="${pageContext.servletContext.contextPath}/cafe/cafe/order/addToCart" method="post">
 											<p><fmt:message key="label.amount"/>:</p>
 											<input id="amount3" name="amount" type="number" value="1" placeholder="<fmt:message key="label.enterAmount"/>" min="1" step="1" required>
 											<button type="submit" class="btn3 flex-c-m size18 txt11 trans-0-4 m-10">
@@ -239,7 +239,7 @@
 	<script type="text/javascript" src="${pageContext.servletContext.contextPath}/assets/vendor/lightbox2/js/lightbox.min.js"></script>
 <!--===============================================================================================-->
 	<script src="${pageContext.servletContext.contextPath}/assets/js/main.js"></script>
-<jsp:include page="/jsp/include/footer.jsp" />
+<jsp:include page="/WEB-INF/jsp/include/footer.jsp" />
 </body>
 </html>
 <%--Modal window--%>

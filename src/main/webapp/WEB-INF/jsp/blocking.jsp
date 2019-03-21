@@ -1,8 +1,8 @@
 <%--
   Created by IntelliJ IDEA.
   User: User
-  Date: 10.03.2019
-  Time: 22:40
+  Date: 20.03.2019
+  Time: 21:32
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
@@ -12,7 +12,7 @@
 <fmt:setBundle basename="pageContent"/>
 <html>
 <head>
-    <title><fmt:message key="label.allDishes"/></title>
+    <title><fmt:message key="label.blocking"/> </title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <!--===============================================================================================-->
@@ -45,79 +45,17 @@
     <!--===============================================================================================-->
 </head>
 <body class="animsition">
-<jsp:include page="/jsp/include/navbar.jsp" />
+<jsp:include page="/WEB-INF/jsp/include/navbar.jsp" />
 <!-- Title Page -->
-<section class="bg-title-page flex-c-m p-t-160 p-b-80 p-l-15 p-r-15" style="background-image: url(${pageContext.servletContext.contextPath}/assets/images/background2.jpg);">
+<section class="bg-title-page flex-c-m p-t-160 p-b-80 p-l-15 p-r-15" style="background-image: url(${pageContext.servletContext.contextPath}/assets/images/background1.jpg);">
     <h2 class="tit6 t-center">
-        <fmt:message key="label.allDishes"/>
+        <fmt:message key="label.blocking"/>
     </h2>
 </section>
 
-
 <section class="section-mainmenu p-t-110 p-b-70 bg1-pattern">
-    <div class="container">
-        <div class="row">
-            <div class="col-md-10 col-lg-6 p-r-35 p-r-15-lg m-l-r-auto">
-                <div class="wrap-item-mainmenu p-b-22">
-                    <h3 class="tit-mainmenu tit10 p-b-25">
-                        <fmt:message key="label.dishes"/>:
-                    </h3>
-                    <c:forEach var="elem" items="${products}" varStatus="status">
-                        <div class="item-mainmenu m-b-36">
-                            <div class="flex-w flex-b m-b-3">
-                                <label class="name-item-mainmenu txt36">
-                                    <c:out value="${elem.title}"/>
-                                </label>
-
-                                <div class="line-item-mainmenu bg3-pattern"></div>
-                                <form action="${pageContext.servletContext.contextPath}/cafe/product/editProduct">
-                                    <button type="submit" class="btn3 flex-c-m size18 txt11 trans-0-4 m-10">
-                                        <fmt:message key="label.change"/>
-                                        <input type="hidden" name="editProduct" value="${elem.id}">
-                                    </button>
-                                </form>
-                            </div>
-
-                            <span class="info-item-mainmenu txt23">
-                            <fmt:message key="label.description"/>: <c:out value="${elem.description}"/><br>
-                            <fmt:message key="label.image"/>:<br>
-                            <p><img src="${elem.picture}" width="200" height="100"></p>
-                            <fmt:message key="label.price"/>: <c:out value="${elem.price}"/><br>
-                            <fmt:message key="label.status"/>:
-                            <c:choose>
-                                <c:when test="${elem.availability == false}">
-                                    <fmt:message key="label.notAvailability"/>
-                                    <br>
-                                </c:when>
-                                <c:otherwise>
-                                    <fmt:message key="label.availability"/>
-                                    <br>
-                                </c:otherwise>
-                            </c:choose>
-                                <fmt:message key="label.category"/>:
-                            <c:choose>
-                                <c:when test="${elem.category == 'FIRST_COURSE'}">
-                                    <fmt:message key="label.firstCourse"/>
-                                    <br>
-                                </c:when>
-                                <c:when test="${elem.category == 'MAIN_COURSE'}">
-                                    <fmt:message key="label.mainCourse"/>
-                                    <br>
-                                </c:when>
-                                <c:otherwise>
-                                    <fmt:message key="label.drink"/>
-                                    <br>
-                                </c:otherwise>
-                            </c:choose>
-                        </span>
-                        </div>
-                    </c:forEach>
-                </div>
-            </div>
-        </div>
-    </div>
+    <fmt:message key="label.blockingMessage"/>
 </section>
-
 
 <!-- Back to top -->
 <div class="btn-back-to-top bg0-hov" id="myBtn">
@@ -153,6 +91,6 @@
 <script type="text/javascript" src="${pageContext.servletContext.contextPath}/assets/vendor/lightbox2/js/lightbox.min.js"></script>
 <!--===============================================================================================-->
 <script src="${pageContext.servletContext.contextPath}/assets/js/main.js"></script>
-<jsp:include page="/jsp/include/footer.jsp" />
+<jsp:include page="/WEB-INF/jsp/include/footer.jsp" />
 </body>
 </html>

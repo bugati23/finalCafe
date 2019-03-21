@@ -2,12 +2,15 @@ package com.gmail.bukato23.dao.impl;
 
 
 import com.gmail.bukato23.dao.AbstractJdbcDao;
-import com.gmail.bukato23.dao.GenericDao;
+import com.gmail.bukato23.dao.AutoConnection;
 import com.gmail.bukato23.dao.OrderDao;
+import com.gmail.bukato23.dao.exception.DaoException;
 import com.gmail.bukato23.entity.order.Order;
 import com.gmail.bukato23.entity.order.PaymentType;
 import com.gmail.bukato23.entity.order.Rating;
 import com.gmail.bukato23.entity.order.Status;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -16,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class OrderDaoImpl extends AbstractJdbcDao<Order, Integer> implements OrderDao {
+    private static final Logger LOGGER = LogManager.getLogger(OrderDaoImpl.class);
     private static final String INSERT_ORDER_SQL =
             "INSERT INTO cafe_order (user_id, payment_type_id, rating_id, status_id, total_amount, pre_oder, time_of_order, time_of_receipt)" +
                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?)";
@@ -23,9 +27,10 @@ public class OrderDaoImpl extends AbstractJdbcDao<Order, Integer> implements Ord
             "SELECT * FROM cafe_order WHERE id = ?";
     private static final String SELECT_ALL_ORDERS =
             "SELECT * FROM cafe_order";
-    private static final String UPDATE_USER =
+    private static final String UPDATE_ORDER =
             "UPDATE cafe_order SET user_id = ?, payment_type_id = ?, rating_id = ?, status_id = ?, total_amount = ?, pre_oder = ?, time_of_order = ?, time_of_receipt = ? WHERE id = ?";
-    private static final String DELETE_USER = "DELETE FROM cafe_order WHERE id = ?";
+    private static final String DELETE_ORDER = "DELETE FROM cafe_order WHERE id = ?";
+    private static final String SELECT_ORDERS_BY_ID_USER = "SELECT * FROM cafe_order WHERE user_id = ?";
 
     public OrderDaoImpl() {
     }
@@ -47,12 +52,16 @@ public class OrderDaoImpl extends AbstractJdbcDao<Order, Integer> implements Ord
 
     @Override
     public String getUpdateQuery() {
-        return UPDATE_USER;
+        return UPDATE_ORDER;
     }
 
     @Override
     public String getDeleteQuery() {
-        return DELETE_USER;
+        return DELETE_ORDER;
+    }
+
+    public String getSelectOrdersByIdUser() {
+        return SELECT_ORDERS_BY_ID_USER;
     }
 
     @Override
@@ -94,5 +103,23 @@ public class OrderDaoImpl extends AbstractJdbcDao<Order, Integer> implements Ord
     protected void prepareStatementForUpdate(PreparedStatement statement, Order order) throws SQLException {
         prepareStatementForInsert(statement, order);
         statement.setInt(9, order.getId());
+    }
+
+    @AutoConnection
+    @Override
+    public List<Order> getByUserId(int userId) throws DaoException {
+        try (PreparedStatement ps = connection.prepareStatement(getSelectOrdersByIdUser())) {
+            ps.setInt(1, userId);
+            try (ResultSet rs = ps.executeQuery()) {
+                List<Order> orders = parseResultSet(rs);
+                if (orders.size() == 0) {
+                    return null;
+                }
+                return orders;
+            }
+        } catch (SQLException e) {
+            LOGGER.error("Problem when trying to find orders by user id");
+            throw new DaoException("Problem when trying to find orders by user id", e);
+        }
     }
 }

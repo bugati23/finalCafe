@@ -1,6 +1,7 @@
 package com.gmail.bukato23.util.constant;
 
 public class ConstantAttributes {
+    public static final String CURRENT_GET_PAGE = "currentGetPage";
     public static final String CHANGE_LANGUAGE = "changeLanguage";
     public static final String ERROR_WRONG_EMAIL = "errorWrongEmail";
     public static final String ERROR_WRONG_LOGIN = "errorWrongLogin";
@@ -22,4 +23,6 @@ public class ConstantAttributes {
     public static final String TOTAL_PRICE = "totalPrice";
     public static final String ERROR_WRONG_TIME = "errorWrongTime";
     public static final String ERROR_WRONG_PAYMENT_TYPE = "errorWrongPaymentType";
+    public static final String EDIT_ORDER = "editOrder";
+    public static final String MY_ORDERS = "myOrders";
 }
