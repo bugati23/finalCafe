@@ -242,29 +242,3 @@
 <jsp:include page="/WEB-INF/jsp/include/footer.jsp" />
 </body>
 </html>
-<%--Modal window--%>
-<%--<div class="modal fade" id="addProduct" tabindex="-1" role="dialog" aria-labelledby="addProduct" aria-hidden="true">--%>
-	<%--<div class="modal-dialog" role="document">--%>
-		<%--<div class="modal-content">--%>
-			<%--<div class="modal-header">--%>
-				<%--<h5 class="modal-title" id="addProdutTitle"><fmt:message key="label.addToCart"/></h5>--%>
-				<%--<button class="close" type="button" data-dismiss="modal" aria-label="Close">--%>
-					<%--<span aria-hidden="true">--%>
-						<%--&times;--%>
-					<%--</span>--%>
-				<%--</button>--%>
-			<%--</div>--%>
-			<%--<div class="modal-body">--%>
-
-			<%--</div>--%>
-			<%--<div class="modal-footer">--%>
-				<%--<button class="btn btn-secondary" data-dismiss="modal"><fmt:message key="label.close"/></button>--%>
-				<%--<form action="${pageContext.servletContext.contextPath}/cafe/product/editProduct">--%>
-					<%--<button class="btn btn-primary" type="submit">--%>
-						<%--<fmt:message key="label.addToCart"/>--%>
-					<%--</button>--%>
-				<%--</form>--%>
-			<%--</div>--%>
-		<%--</div>--%>
-	<%--</div>--%>
-<%--</div>--%>

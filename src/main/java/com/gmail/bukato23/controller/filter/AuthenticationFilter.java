@@ -10,12 +10,12 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
-@WebFilter(filterName = "authentication",urlPatterns = {"/cafe/cafe/user/profile","/cafe/cafe/user/editProfile","/cafe/cafe/user/editprofileForm","/cafe/cafe/user/allUsers",
-        "/cafe/cafe/user/editUser","/cafe/cafe/user/editUserForm","/cafe/cafe/user/deleteUser",
-        "/cafe/cafe/feedback/addReview","/cafe/cafe/feedback/addReviewForm",
-        "/cafe/cafe/product/allProducts","/cafe/cafe/product/addProduct","/cafe/cafe/product/addProductForm","/cafe/cafe/product/editProduct","/cafe/cafe/product/editProductForm","/cafe/cafe/product/deleteProduct",
-        "/cafe/cafe/order/*"},
-        initParams = {@WebInitParam(name = "loginPath", value = "/cafe/cafe/user/signin")})
+@WebFilter(filterName = "authentication",urlPatterns = {"/cafe/user/profile","/cafe/user/editProfile","/cafe/user/editprofileForm","/cafe/user/allUsers",
+        "/cafe/user/editUser","/cafe/user/editUserForm","/cafe/user/deleteUser",
+        "/cafe/feedback/addReview","/cafe/feedback/addReviewForm",
+        "/cafe/product/allProducts","/cafe/product/addProduct","/cafe/product/addProductForm","/cafe/product/editProduct","/cafe/product/editProductForm","/cafe/product/deleteProduct",
+        "/cafe/order/*"},
+        initParams = {@WebInitParam(name = "loginPath", value = "/cafe/user/signin")})
 public class AuthenticationFilter implements Filter {
     private String loginPath;
 
@@ -41,8 +41,3 @@ public class AuthenticationFilter implements Filter {
     }
 }
 
-//urlPatterns = {"/cafe/user/profile","/cafe/user/editProfile","/cafe/user/editprofileForm","/cafe/user/allUsers",
-//        "/cafe/user/editUser","/cafe/user/editUserForm","/cafe/user/deleteUser",
-//        "/cafe/feedback/addReview","/cafe/feedback/addReviewForm",
-//        "/cafe/product/allProducts","/cafe/product/addProduct","/cafe/product/addProductForm","/cafe/product/editProduct","/cafe/product/editProductForm","/cafe/product/deleteProduct",
-//        "/cafe/order/*"},

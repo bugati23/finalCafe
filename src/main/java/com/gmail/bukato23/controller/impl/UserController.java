@@ -230,7 +230,6 @@ public class UserController {
         HttpSession session = request.getSession(true);
         session.setAttribute("changeLanguage", ConstantLocales.ENGLISH_LOCALE);
         String currentGetPage = (String)session.getAttribute(ConstantAttributes.CURRENT_GET_PAGE);
-        //return ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_HOME);
         return "redirect " + currentGetPage;
     }
 
@@ -239,7 +238,6 @@ public class UserController {
         HttpSession session = request.getSession(true);
         session.setAttribute("changeLanguage", ConstantLocales.RUSSIAN_LOCALE);
         String currentGetPage = (String)session.getAttribute(ConstantAttributes.CURRENT_GET_PAGE);
-        //return ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_HOME);
         return "redirect " + currentGetPage;
     }
 
@@ -286,6 +284,7 @@ public class UserController {
                         if (userService.checkIsLoginFree(login) || user.getLogin().equals(login)) {
                             User updateUser = userService.updateProfileUser(user.getId(), login, BCryptHash.hashPassword(password), firstName, lastName);
                             httpSession.setAttribute(ConstantAttributes.USER, updateUser);
+                            httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,"/cafe/user/profile");
                             page = ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_PROFILE);
                         } else {
                             request.setAttribute(ConstantAttributes.ERROR_WRONG_LOGIN, messageManager
@@ -357,6 +356,7 @@ public class UserController {
                     user.setPointsLoyalty(pointsLoyalty);
                     user.setBlocked(blocked);
                     userService.updateUserByAdmin(user);
+                    httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,"/cafe/user/allUsers");
                     page = ConstantURL.ALL_USERS;
                 } else {
                     request.setAttribute(ConstantAttributes.ERROR_WRONG_POINTS_LOYALTY, messageManager.

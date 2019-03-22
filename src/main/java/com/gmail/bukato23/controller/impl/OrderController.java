@@ -179,6 +179,7 @@ public class OrderController {
         httpSession.setAttribute(ConstantAttributes.USER, user);
         httpSession.setAttribute(ConstantAttributes.CART, null);
         httpSession.setAttribute(ConstantAttributes.TOTAL_PRICE, null);
+        httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE, "/cafe/user/profile");
         return ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_PROFILE);
     }
 
@@ -220,6 +221,7 @@ public class OrderController {
     public String editOrderForm(HttpServletRequest request) throws ControllerException{
         try {
             HttpSession httpSession = request.getSession();
+            httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE, "/cafe/order/allOrders");
             Order order = (Order) httpSession.getAttribute(ConstantAttributes.EDIT_ORDER);
             Status orderStatus = Status.fromID(Integer.parseInt(request.getParameter(ConstantParametrs.STATUS_ORDER)));
             order.setStatus(orderStatus);
@@ -242,6 +244,11 @@ public class OrderController {
         } catch (ServiceException e) {
             throw new ControllerException(e);
         }
+    }
+
+    @RequestMappingMethod(path = "/rateOrder")
+    public String rateOrder(HttpServletRequest request) throws ControllerException{
+        return null;
     }
 
 }

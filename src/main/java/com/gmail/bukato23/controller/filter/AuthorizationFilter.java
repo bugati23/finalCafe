@@ -12,11 +12,11 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
-@WebFilter(filterName = "authorization",urlPatterns = {"/cafe/cafe/user/allUsers",
-        "/cafe/cafe/user/editUser","/cafe/cafe/user/editUserForm","/cafe/cafe/user/deleteUser",
-        "/cafe/cafe/product/allProducts","/cafe/cafe/product/addProduct","/cafe/cafe/product/addProductForm","/cafe/cafe/product/editProduct","/cafe/cafe/product/editProductForm","/cafe/cafe/product/deleteProduct",
-        "/cafe/cafe/order/allOrders"},
-        initParams = {@WebInitParam(name = "authorizationMessage", value = "/cafe/cafe/user/authorization")})
+@WebFilter(filterName = "authorization",urlPatterns = {"/cafe/user/allUsers",
+        "/cafe/user/editUser","/cafe/user/editUserForm","/cafe/user/deleteUser",
+        "/cafe/product/allProducts","/cafe/product/addProduct","/cafe/product/addProductForm","/cafe/product/editProduct","/cafe/product/editProductForm","/cafe/product/deleteProduct",
+        "/cafe/order/allOrders","/cafe/order/editOrder","/cafe/order/editOrderForm"},
+        initParams = {@WebInitParam(name = "authorizationMessage", value = "/cafe/user/authorization")})
 public class AuthorizationFilter implements Filter {
     private String authorizationMessage;
 
@@ -42,7 +42,3 @@ public class AuthorizationFilter implements Filter {
 
     }
 }
-//urlPatterns = {"/cafe/user/allUsers",
-//        "/cafe/user/editUser","/cafe/user/editUserForm","/cafe/user/deleteUser",
-//        "/cafe/product/allProducts","/cafe/product/addProduct","/cafe/product/addProductForm","/cafe/product/editProduct","/cafe/product/editProductForm","/cafe/product/deleteProduct",
-//        "/cafe/order/allOrders"},

@@ -56,6 +56,7 @@ public class FeedbackController {
         try {
             String review = request.getParameter(ConstantParametrs.REVIEW);
             HttpSession httpSession = request.getSession();
+            httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,"/cafe/feedback/reviews");
             request.setAttribute(ConstantAttributes.ERROR_WRONG_REVIEW, null);
             MessageManager messageManager = MessageManager.defineLocale((String) httpSession.getAttribute(
                     ConstantAttributes.CHANGE_LANGUAGE));

@@ -42,6 +42,7 @@
     <!--===============================================================================================-->
     <link rel="stylesheet" type="text/css" href="${pageContext.servletContext.contextPath}/assets/css/util.css">
     <link rel="stylesheet" type="text/css" href="${pageContext.servletContext.contextPath}/assets/css/main.css">
+    <link rel="stylesheet" type="text/css" href="${pageContext.servletContext.contextPath}/assets/css/rating.css">
     <!--===============================================================================================-->
 </head>
 <body class="animsition">
@@ -71,7 +72,7 @@
 
                                 <div class="line-item-mainmenu bg3-pattern"></div>
                                 <c:if test="${elem.status == 'CLOSED'}">
-                                    <form action="${pageContext.servletContext.contextPath}/cafe/order/editOrder">
+                                    <form action="${pageContext.servletContext.contextPath}/cafe/order/rateOrder">
                                         <button type="submit" class="btn3 flex-c-m size18 txt11 trans-0-4 m-10">
                                             <fmt:message key="label.changeStatus"/>
                                             <input type="hidden" name="rateOrder" value="${elem.id}">

@@ -11,9 +11,9 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
-@WebFilter(filterName = "blocking",urlPatterns = {"/cafe/cafe/feedback/addReview","/cafe/cafe/feedback/addReviewForm",
-        "/cafe/cafe/order/*"},
-        initParams = {@WebInitParam(name = "blockingMessage", value = "/cafe/cafe/user/blocking")})
+@WebFilter(filterName = "blocking",urlPatterns = {"/cafe/feedback/addReview","/cafe/feedback/addReviewForm",
+        "/cafe/order/addToCart","/cafe/order/cart","/cafe/order/orderForm","/cafe/order/rateOrder"},
+        initParams = {@WebInitParam(name = "blockingMessage", value = "/cafe/user/blocking")})
 public class BlockingFilter implements Filter {
     private String blockingMessage;
 

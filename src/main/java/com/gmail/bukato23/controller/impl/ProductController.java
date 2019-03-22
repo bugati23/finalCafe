@@ -74,6 +74,7 @@ public class ProductController {
                             product.setAvailability(availabilityProduct);
                             productService.addProduct(product);
                             page = ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_PROFILE);
+                            httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,"/cafe/user/profile");
                         } else {
                             request.setAttribute(ConstantAttributes.ERROR_WRONG_PRICE, messageManager.
                                     getMessage(ConstantMessages.PATH_ERROR_WRONG_PRICE));
@@ -150,7 +151,8 @@ public class ProductController {
                             product.setCategory(productCategory);
                             product.setAvailability(availabilityProduct);
                             productService.updateProductByAdmin(product);
-                            page = "redirect" + ConstantURL.ALL_PRODUCTS;
+                            page = "redirect " + ConstantURL.ALL_PRODUCTS;
+                            httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,"/cafe/product/allProducts");
                         } else {
                             request.setAttribute(ConstantAttributes.ERROR_WRONG_PRICE, messageManager.
                                     getMessage(ConstantMessages.PATH_ERROR_WRONG_PRICE));

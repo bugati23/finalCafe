@@ -89,7 +89,7 @@ public class DispatcherServlet extends HttpServlet {
                     RequestMappingMethod requestMappingMethod = method.getAnnotation(RequestMappingMethod.class);
                     methodMapping = requestMappingMethod.path();
                     urlToEndpointMethodMap.put(
-                            servletMapping + servletMapping + classMapping + methodMapping, // убрать 1 servletMapping
+                            servletMapping + classMapping + methodMapping,
                             new EndpointMethod(method, controller)
                     );
                 }
