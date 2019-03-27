@@ -26,6 +26,7 @@
     </fieldset>
     <fieldset id="actions">
         <input type="submit" id="submit" value="<fmt:message key="label.signIn"/>"/>
+        <input type="hidden" name="formId" value="${formId}">
         <a href="${pageContext.servletContext.contextPath}/cafe/user/forgotPassword"><fmt:message key="label.forgotPassword"/> </a>
         <a href="${pageContext.servletContext.contextPath}/cafe/user/signup"><fmt:message key="label.signUp"/></a>
         <a href="${pageContext.servletContext.contextPath}/cafe/user/langen"><img src="${pageContext.servletContext.contextPath}/assets/images/icons/icons8-great-britain-48.png"></a>

@@ -1,8 +1,8 @@
 <%--
   Created by IntelliJ IDEA.
   User: User
-  Date: 20.03.2019
-  Time: 1:46
+  Date: 26.03.2019
+  Time: 0:37
   To change this template use File | Settings | File Templates.
 --%>
 <%@ page contentType="text/html;charset=UTF-8" pageEncoding="UTF-8" %>
@@ -12,11 +12,9 @@
 <fmt:setBundle basename="pageContent"/>
 <html>
 <head>
-    <title><fmt:message key="label.allOrders"/></title>
+    <title><fmt:message key="label.rateOrder"/></title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!--===============================================================================================-->
-    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet">
     <!--===============================================================================================-->
     <link rel="icon" type="image/png" href="${pageContext.servletContext.contextPath}/assets/images/icons/favicon.png"/>
     <!--===============================================================================================-->
@@ -46,120 +44,53 @@
 </head>
 <body class="animsition">
 <jsp:include page="/WEB-INF/jsp/include/navbar.jsp" />
-<!-- Title Page -->
-<section class="bg-title-page flex-c-m p-t-160 p-b-80 p-l-15 p-r-15" style="background-image: url(${pageContext.servletContext.contextPath}/assets/images/background2.jpg);">
-    <h2 class="tit6 t-center">
-        <fmt:message key="label.allOrders"/>
-    </h2>
-</section>
-
-
-<section class="section-mainmenu p-t-110 p-b-70 bg1-pattern">
+<section class="section-booking bg1-pattern p-t-100 p-b-110">
     <div class="container">
         <div class="row">
-            <div class="col-md-10 col-lg-6 p-r-35 p-r-15-lg m-l-r-auto">
-                <div class="wrap-item-mainmenu p-b-22">
-                    <h3 class="tit-mainmenu tit10 p-b-25">
-                        <fmt:message key="label.orders"/>:
+            <div class="col-lg-6 p-b-30">
+                <div class="t-center">
+                    <h3 class="tit3 t-center m-b-35 m-t-2">
+                        <fmt:message key="label.rateOrder"/>
                     </h3>
-                    <c:forEach var="elem" items="${allOrders}" varStatus="status">
-                        <div class="item-mainmenu m-b-36">
-                            <div class="flex-w flex-b m-b-3">
-                                <a class="name-item-mainmenu txt36">
-                                    <c:out value="${userOrder[status.index].login}"/>: <fmt:message key="label.orderNoun"/> № <c:out value="${elem.id}"/>
-                                </a>
+                </div>
 
-                                <div class="line-item-mainmenu bg3-pattern"></div>
-                                <form action="${pageContext.servletContext.contextPath}/cafe/order/editOrder">
-                                    <button type="submit" class="btn3 flex-c-m size18 txt11 trans-0-4 m-10">
-                                        <fmt:message key="label.changeStatus"/>
-                                        <input type="hidden" name="editOrder" value="${elem.id}">
-                                    </button>
-                                </form>
+                <form class="wrap-form-booking" action="${pageContext.servletContext.contextPath}/cafe/order/rateOrderForm" method="post">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <span class="txt9">
+                             <fmt:message key="label.rating"/>
+                            </span>
+
+                            <div class="wrap-inputpeople size12 bo2 bo-rad-10 m-t-3 m-b-23">
+                                <!-- Select2 -->
+                                <select class="selection-1" name="rating" required>
+                                    <option value="1"><c:out value="1"/> </option>
+                                    <option value="2"><c:out value="2"/> </option>
+                                    <option value="3"><c:out value="3"/> </option>
+                                    <option value="4"><c:out value="4"/> </option>
+                                    <option value="5"><c:out value="5"/> </option>
+                                </select>
                             </div>
-                            <span class="info-item-mainmenu txt23">
-                                <fmt:message key="label.products"/>:
-                                <c:forEach var="products" items="${myProducts[status.index]}" varStatus="stat">
-                                    <c:out value="${products.key.title}"/>(x<c:out value="${products.value}"/>);
-                                </c:forEach>
-                                <br>
-                                <fmt:message key="label.paymentType"/>:
-                                <c:choose>
-                                    <c:when test="${elem.paymentType == 'CASH'}">
-                                        <fmt:message key="label.cash"/>
-                                        <br>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <fmt:message key="label.onlineCash"/>
-                                        <br>
-                                    </c:otherwise>
-                                </c:choose>
-                                <fmt:message key="label.status"/>:
-                                <c:choose>
-                                    <c:when test="${elem.status == 'EXPECTS'}">
-                                        <fmt:message key="label.expects"/>
-                                        <br>
-                                    </c:when>
-                                    <c:when test="${elem.status == 'CLOSED'}">
-                                        <fmt:message key="label.closed"/>
-                                        <br>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <fmt:message key="label.expired"/>
-                                        <br>
-                                    </c:otherwise>
-                                </c:choose>
-                                <fmt:message key="label.totalPrice"/>: <c:out value="${elem.totalAmount}"/><br>
-                                <fmt:message key="label.preoder"/>:
-                                <c:choose>
-                                    <c:when test="${elem.preOder == true}">
-                                        <fmt:message key="label.yes"/>
-                                        <br>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <fmt:message key="label.no"/>
-                                        <br>
-                                    </c:otherwise>
-                                </c:choose>
-                                <fmt:message key="label.timeOrder"/>: <c:out value="${elem.dateOrder}"/><br>
-                                <fmt:message key="label.timeReciept"/>: <c:out value="${elem.dateReceipt}"/><br>
-                                <fmt:message key="label.rating"/>:
-                                <c:choose>
-                                    <c:when test="${elem.rating == 'ONE'}">
-                                        <c:out value="1"/>
-                                        <br>
-                                    </c:when>
-                                    <c:when test="${elem.rating == 'TWO'}">
-                                        <c:out value="2"/>
-                                        <br>
-                                    </c:when>
-                                    <c:when test="${elem.rating == 'THREE'}">
-                                        <c:out value="3"/>
-                                        <br>
-                                    </c:when>
-                                    <c:when test="${elem.rating == 'FOUR'}">
-                                        <c:out value="4"/>
-                                        <br>
-                                    </c:when>
-                                    <c:when test="${elem.rating == 'FIVE'}">
-                                        <c:out value="5"/>
-                                        <br>
-                                    </c:when>
-                                    <c:otherwise>
-                                        <c:out value="${elem.rating}"/><br>
-                                        <br>
-                                    </c:otherwise>
-                                </c:choose>
-                        </span>
                         </div>
-                    </c:forEach>
+                    </div>
+
+                    <div class="wrap-btn-booking flex-c-m m-t-6">
+                        <!-- Button3 -->
+                        <button type="submit" class="btn3 flex-c-m size13 txt11 trans-0-4">
+                            <fmt:message key="label.rate"/>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="col-lg-6 p-b-30 p-t-18">
+                <div class="wrap-pic-booking size2 bo-rad-10 hov-img-zoom m-l-r-auto">
+                    <img src="${pageContext.servletContext.contextPath}/assets/images/background2.jpg" alt="IMG-OUR">
                 </div>
             </div>
         </div>
     </div>
 </section>
-
-
 <!-- Back to top -->
 <div class="btn-back-to-top bg0-hov" id="myBtn">
 		<span class="symbol-btn-back-to-top">
@@ -167,7 +98,8 @@
 		</span>
 </div>
 
-
+<!-- Container Selection1 -->
+<div id="dropDownSelect1"></div>
 <!--===============================================================================================-->
 <script type="text/javascript" src="${pageContext.servletContext.contextPath}/assets/vendor/jquery/jquery-3.2.1.min.js"></script>
 <!--===============================================================================================-->

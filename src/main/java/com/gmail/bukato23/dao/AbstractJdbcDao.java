@@ -3,6 +3,7 @@ package com.gmail.bukato23.dao;
 import com.gmail.bukato23.dao.exception.DaoException;
 import com.gmail.bukato23.dao.exception.PersistException;
 import com.gmail.bukato23.entity.Identified;
+import com.gmail.bukato23.entity.User;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -41,7 +42,11 @@ public abstract class AbstractJdbcDao<T extends Identified<PK>, PK extends Numbe
         try (PreparedStatement ps = connection.prepareStatement(getSelectQueryId())) {
             ps.setInt(1, (Integer) key);
             try (ResultSet rs = ps.executeQuery()) {
-                return parseResultSet(rs).get(0);
+                List<T> entities = parseResultSet(rs);
+                if(entities.isEmpty()){
+                  return null;
+                }
+                return entities.get(0);
             }
         } catch (SQLException e) {
             LOGGER.error("Problem when trying to find entity by id");

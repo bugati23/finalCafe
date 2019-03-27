@@ -12,6 +12,7 @@ import com.gmail.bukato23.util.Validation;
 import com.gmail.bukato23.util.constant.*;
 import com.gmail.bukato23.util.property.ConfigurationManager;
 import com.gmail.bukato23.util.property.MessageManager;
+import com.gmail.bukato23.util.ValidURI;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -26,7 +27,10 @@ public class ProductController {
     public String showAllProducts(HttpServletRequest request) throws ControllerException {
         try {
             HttpSession httpSession = request.getSession();
-            httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,"/cafe/product/allProducts");
+            String uri = request.getRequestURI();
+            if(ValidURI.validURI(uri)){
+                httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,uri);
+            }
             List<Product> products = productService.getAll();
             request.setAttribute("products", products);
             return ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_ALL_PRODUCTS);
@@ -38,7 +42,10 @@ public class ProductController {
     @RequestMappingMethod(path = "/addProduct")
     public String addProduct(HttpServletRequest request) {
         HttpSession httpSession = request.getSession();
-        httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,"/cafe/product/addProduct");
+        String uri = request.getRequestURI();
+        if(ValidURI.validURI(uri)){
+            httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,uri);
+        }
         return ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_ADD_PRODUCT);
     }
 
@@ -101,11 +108,18 @@ public class ProductController {
     public String editProduct(HttpServletRequest request) throws ControllerException {
         try {
             HttpSession httpSession = request.getSession();
-            httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,"/cafe/product/editProduct");
+            String uri = request.getRequestURI();
+            if(ValidURI.validURI(uri)){
+                httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,uri);
+            }
             int productId = Integer.parseInt(request.getParameter(ConstantAttributes.EDIT_PRODUCT));
             Product editProduct = productService.getByID(productId);
+            String page = ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_EDIT_PRODUCT);
+            if(editProduct == null){
+                page = "redirect " + ConstantURL.ALL_PRODUCTS;
+            }
             httpSession.setAttribute(ConstantAttributes.EDIT_PRODUCT, editProduct);
-            return ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_EDIT_PRODUCT);
+            return page;
         } catch (ServiceException e) {
             throw new ControllerException(e);
         }
@@ -180,8 +194,10 @@ public class ProductController {
         try {
             HttpSession httpSession = request.getSession();
             Product product = (Product) httpSession.getAttribute(ConstantAttributes.EDIT_PRODUCT);
-            productService.deleteProduct(product);
-            return ConstantURL.ALL_PRODUCTS;
+            if(!(productService.getByID(product.getId())==null)) {
+                productService.deleteProduct(product);
+            }
+            return "redirect " + ConstantURL.ALL_PRODUCTS;
         } catch (Exception e) {
             throw new ControllerException(e);
         }
@@ -191,7 +207,10 @@ public class ProductController {
     public String showMenu(HttpServletRequest request) throws ControllerException {
         try {
             HttpSession httpSession = request.getSession();
-            httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,"/cafe/product/menu");
+            String uri = request.getRequestURI();
+            if(ValidURI.validURI(uri)){
+                httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,uri);
+            }
             List<Product> products = productService.getAll();
             request.setAttribute("products", products);
             return ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_MENU);

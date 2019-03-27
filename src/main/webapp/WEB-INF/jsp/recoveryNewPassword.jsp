@@ -26,6 +26,7 @@
     </fieldset>
     <fieldset id="actions">
         <input type="submit" id="submit" value="<fmt:message key="label.save"/>"/>
+        <input type="hidden" name="formId" value="${formId}">
     </fieldset>
     <br>
     <a href="${pageContext.servletContext.contextPath}/cafe/user/langen"><img src="${pageContext.servletContext.contextPath}/assets/images/icons/icons8-great-britain-48.png"></a>

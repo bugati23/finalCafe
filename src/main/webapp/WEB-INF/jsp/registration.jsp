@@ -31,6 +31,7 @@
         <input name="lastName" type="text" value="<c:out value="${formUser.lastName}"/>" placeholder="<fmt:message key="label.enterLastName"/>" minlength="4" maxlength="50" required/>
         <label style="color:#721c24">${errorWrongUserName}</label>
         <input id="submit" type="submit" value="<fmt:message key="label.register"/>"/>
+        <input type="hidden" name="formId" value="${formId}">
         <a href="${pageContext.servletContext.contextPath}/cafe/user/langen"><img src="${pageContext.servletContext.contextPath}/assets/images/icons/icons8-great-britain-48.png"></a>
         <a href="${pageContext.servletContext.contextPath}/cafe/user/langru"><img src="${pageContext.servletContext.contextPath}/assets/images/icons/icons8-russian-federation-48.png"></a>
     </fieldset>

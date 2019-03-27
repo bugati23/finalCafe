@@ -10,9 +10,11 @@ import com.gmail.bukato23.entity.User;
 import com.gmail.bukato23.entity.order.Order;
 import com.gmail.bukato23.service.OrderService;
 import com.gmail.bukato23.service.ServiceException;
+import com.sun.javafx.collections.MappingChange;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -102,6 +104,28 @@ public class OrderServiceImpl implements OrderService {
         } catch (DaoException e) {
             LOGGER.error(e);
             throw new ServiceException("Failed to get order DAO. ", e);
+        }
+    }
+
+    @Override
+    public Map<Product, Integer> getProductsByOrderId(int orderId) throws ServiceException {
+        DaoFactory daoFactory = FactoryProducer.getDaoFactory(DaoFactoryType.JDBC);
+        try {
+            OrderProductDao orderProductDao = (OrderProductDao) daoFactory.getDao(OrderProduct.class);
+            ProductDao productDao = (ProductDao) daoFactory.getDao(Product.class);
+            List<OrderProduct> orderProductList = orderProductDao.getOrderProductsByOrderId(orderId);
+            if(orderProductList != null) {
+                Map<Product, Integer> productIntegerMap = new HashMap<>();
+                for (OrderProduct elem : orderProductList) {
+                    Product product = productDao.getByPK(elem.getProductId());
+                    productIntegerMap.put(product, elem.getAmount());
+                }
+                return productIntegerMap;
+            }
+            return null;
+        } catch (DaoException e) {
+            LOGGER.error(e);
+            throw new ServiceException("Failed to get orderProduct or product DAO. ", e);
         }
     }
 }

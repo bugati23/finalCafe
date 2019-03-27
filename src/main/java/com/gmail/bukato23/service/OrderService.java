@@ -13,4 +13,5 @@ public interface OrderService {
     Order getById(int id) throws ServiceException;
     void updateOrderByAdmin(Order order) throws ServiceException;
     List<Order> getByUserId(int userId) throws ServiceException;
+    Map<Product,Integer> getProductsByOrderId(int orderId) throws ServiceException;
 }

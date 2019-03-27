@@ -74,13 +74,18 @@
                                 <c:if test="${elem.status == 'CLOSED'}">
                                     <form action="${pageContext.servletContext.contextPath}/cafe/order/rateOrder">
                                         <button type="submit" class="btn3 flex-c-m size18 txt11 trans-0-4 m-10">
-                                            <fmt:message key="label.changeStatus"/>
+                                            <fmt:message key="label.rate"/>
                                             <input type="hidden" name="rateOrder" value="${elem.id}">
                                         </button>
                                     </form>
                                 </c:if>
                             </div>
                             <span class="info-item-mainmenu txt23">
+                                <fmt:message key="label.products"/>:
+                                <c:forEach var="products" items="${myProducts[status.index]}" varStatus="stat">
+                                    <c:out value="${products.key.title}"/>(x<c:out value="${products.value}"/>);
+                                </c:forEach>
+                                <br>
                                 <fmt:message key="label.paymentType"/>:
                                 <c:choose>
                                     <c:when test="${elem.paymentType == 'CASH'}">
@@ -122,7 +127,29 @@
                                 <fmt:message key="label.timeOrder"/>: <c:out value="${elem.dateOrder}"/><br>
                                 <fmt:message key="label.timeReciept"/>: <c:out value="${elem.dateReceipt}"/><br>
                                 <c:if test="${elem.rating != 'DEFAULT'}">
-                                    <fmt:message key="label.rating"/>: <c:out value="${elem.rating}"/><br>
+                                    <fmt:message key="label.rating"/>:
+                                    <c:choose>
+                                        <c:when test="${elem.rating == 'ONE'}">
+                                            <c:out value="1"/>
+                                            <br>
+                                        </c:when>
+                                        <c:when test="${elem.rating == 'TWO'}">
+                                            <c:out value="2"/>
+                                            <br>
+                                        </c:when>
+                                        <c:when test="${elem.rating == 'THREE'}">
+                                            <c:out value="3"/>
+                                            <br>
+                                        </c:when>
+                                        <c:when test="${elem.rating == 'FOUR'}">
+                                            <c:out value="4"/>
+                                            <br>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <c:out value="5"/>
+                                            <br>
+                                        </c:otherwise>
+                                    </c:choose>
                                 </c:if>
                         </span>
                         </div>

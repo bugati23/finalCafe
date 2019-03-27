@@ -3,8 +3,11 @@ package com.gmail.bukato23.controller.impl;
 import com.gmail.bukato23.controller.ControllerException;
 import com.gmail.bukato23.controller.RequestMappingClass;
 import com.gmail.bukato23.controller.RequestMappingMethod;
+import com.gmail.bukato23.controller.SafeMethod;
+import com.gmail.bukato23.entity.Form;
 import com.gmail.bukato23.entity.User;
 import com.gmail.bukato23.entity.UserRole;
+import com.gmail.bukato23.service.FormService;
 import com.gmail.bukato23.service.ServiceException;
 import com.gmail.bukato23.service.ServiceFactory;
 import com.gmail.bukato23.service.UserService;
@@ -13,6 +16,7 @@ import com.gmail.bukato23.util.Validation;
 import com.gmail.bukato23.util.constant.*;
 import com.gmail.bukato23.util.property.ConfigurationManager;
 import com.gmail.bukato23.util.property.MessageManager;
+import com.gmail.bukato23.util.ValidURI;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -24,129 +28,164 @@ import java.util.List;
 @RequestMappingClass(path = "/user")
 public class UserController {
     private UserService userService = ServiceFactory.getInstance().getUserService();
-
+    private FormService formService = ServiceFactory.getInstance().getFormService();
+   // @SafeMethod
     @RequestMappingMethod(path = "/profile")
     public String profile(HttpServletRequest request) {
         HttpSession httpSession = request.getSession();
-        httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,"/cafe/user/profile");
+        String uri = request.getRequestURI();
+        httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,uri);
         return ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_PROFILE);
     }
 
+  //  @SafeMethod
     @RequestMappingMethod(path = "/home")
     public String home(HttpServletRequest request) {
         HttpSession httpSession = request.getSession();
-        httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,"/cafe/user/home");
+        String uri = request.getRequestURI();
+        httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,uri);
         return ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_HOME);
     }
 
     @RequestMappingMethod(path = "/signin")
-    public String signIn(HttpServletRequest request) {
-        HttpSession httpSession = request.getSession();
-        httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,"/cafe/user/signin");
-        return ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_LOGIN);
+    public String signIn(HttpServletRequest request) throws ControllerException {
+        try {
+            HttpSession httpSession = request.getSession();
+            String uri = request.getRequestURI();
+
+            if (ValidURI.validURI(uri)) {
+                httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE, uri);
+            }
+            int formId = formService.createForm();
+            request.setAttribute(ConstantParametrs.FORM_ID, formId);
+            return ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_LOGIN);
+        }
+        catch (ServiceException exc){
+            throw new ControllerException(exc);
+        }
     }
 
     @RequestMappingMethod(path = "/signinForm")
     public String signInForm(HttpServletRequest request) throws ControllerException {
         try {
-            String login = request.getParameter(ConstantParametrs.LOGIN);
-            String password = request.getParameter(ConstantParametrs.PASSWORD);
+            int formId = Integer.parseInt(request.getParameter(ConstantParametrs.FORM_ID));
+            if(!formService.getById(formId)) {
+                String login = request.getParameter(ConstantParametrs.LOGIN);
+                String password = request.getParameter(ConstantParametrs.PASSWORD);
 
-            HttpSession httpSession = request.getSession();
-            request.setAttribute(ConstantAttributes.ERROR_WRONG_LOGIN, null);
-            request.setAttribute(ConstantAttributes.ERROR_WRONG_PASSWORD, null);
+                HttpSession httpSession = request.getSession();
+                request.setAttribute(ConstantAttributes.ERROR_WRONG_LOGIN, null);
+                request.setAttribute(ConstantAttributes.ERROR_WRONG_PASSWORD, null);
 
-            MessageManager messageManager = MessageManager.defineLocale((String) httpSession.getAttribute(
-                    ConstantAttributes.CHANGE_LANGUAGE));
+                MessageManager messageManager = MessageManager.defineLocale((String) httpSession.getAttribute(
+                        ConstantAttributes.CHANGE_LANGUAGE));
 
-            String page = ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_LOGIN);
-            if (Validation.isCorrectLogin(login) && Validation.isCorrectPassword(password)) {
-                User user = userService.signIn(login, password);
-                if (user != null) {
-                    page = ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_HOME);
-                    httpSession.setAttribute(ConstantAttributes.USER, user);
+                String page = "redirect " + ConstantURL.SIGNIN;
+                if (Validation.isCorrectLogin(login) && Validation.isCorrectPassword(password)) {
+                    User user = userService.signIn(login, password);
+                    if (user != null) {
+                        page = ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_HOME);
+                        httpSession.setAttribute(ConstantAttributes.USER, user);
+                        formService.update(formId);
+                    } else {
+                        request.setAttribute(ConstantAttributes.ERROR_WRONG_LOGIN_OR_PASSWORD, messageManager.
+                                getMessage(ConstantMessages.PATH_ERROR_WRONG_LOGIN_OR_PASSWORD));
+                    }
                 } else {
                     request.setAttribute(ConstantAttributes.ERROR_WRONG_LOGIN_OR_PASSWORD, messageManager.
                             getMessage(ConstantMessages.PATH_ERROR_WRONG_LOGIN_OR_PASSWORD));
                 }
-            } else {
-                request.setAttribute(ConstantAttributes.ERROR_WRONG_LOGIN_OR_PASSWORD, messageManager.
-                        getMessage(ConstantMessages.PATH_ERROR_WRONG_LOGIN_OR_PASSWORD));
+                return page;
             }
-            return page;
+            return ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_HOME);
         } catch (ServiceException e) {
             throw new ControllerException(e);
         }
     }
 
     @RequestMappingMethod(path = "/signup")
-    public String signUp(HttpServletRequest request) {
-        HttpSession httpSession = request.getSession();
-        httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,"/cafe/user/signup");
-        return ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_REGISTRATION);
+    public String signUp(HttpServletRequest request) throws ControllerException {
+        try {
+            HttpSession httpSession = request.getSession();
+            String uri = request.getRequestURI();
+            if (ValidURI.validURI(uri)) {
+                httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE, uri);
+            }
+            int formId = formService.createForm();
+            request.setAttribute(ConstantParametrs.FORM_ID,formId);
+            return ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_REGISTRATION);
+        }
+        catch (ServiceException exc){
+            throw new ControllerException(exc);
+        }
     }
 
     @RequestMappingMethod(path = "/signupForm")
     public String signUpForm(HttpServletRequest request) throws ControllerException {
         try {
-            String login = request.getParameter(ConstantParametrs.LOGIN);
-            String password = request.getParameter(ConstantParametrs.PASSWORD);
-            String email = request.getParameter(ConstantParametrs.EMAIL);
-            String firstName = request.getParameter(ConstantParametrs.FIRST_NAME);
-            String lastName = request.getParameter(ConstantParametrs.LAST_NAME);
+            int formId = Integer.parseInt(request.getParameter(ConstantParametrs.FORM_ID));
+            if(!formService.getById(formId)) {
+                String login = request.getParameter(ConstantParametrs.LOGIN);
+                String password = request.getParameter(ConstantParametrs.PASSWORD);
+                String email = request.getParameter(ConstantParametrs.EMAIL);
+                String firstName = request.getParameter(ConstantParametrs.FIRST_NAME);
+                String lastName = request.getParameter(ConstantParametrs.LAST_NAME);
 
-            HttpSession httpSession = request.getSession();
-            request.setAttribute(ConstantAttributes.ERROR_WRONG_LOGIN, null);
-            request.setAttribute(ConstantAttributes.ERROR_WRONG_EMAIL, null);
-            request.setAttribute(ConstantAttributes.ERROR_WRONG_PASSWORD, null);
-            request.setAttribute(ConstantAttributes.ERROR_WRONG_USER_NAME, null);
+                request.setAttribute(ConstantAttributes.ERROR_WRONG_LOGIN, null);
+                request.setAttribute(ConstantAttributes.ERROR_WRONG_EMAIL, null);
+                request.setAttribute(ConstantAttributes.ERROR_WRONG_PASSWORD, null);
+                request.setAttribute(ConstantAttributes.ERROR_WRONG_USER_NAME, null);
 
-            MessageManager messageManager = MessageManager.defineLocale((String) httpSession.getAttribute(
-                    ConstantAttributes.CHANGE_LANGUAGE));
+                HttpSession httpSession = request.getSession();
+                MessageManager messageManager = MessageManager.defineLocale((String) httpSession.getAttribute(
+                        ConstantAttributes.CHANGE_LANGUAGE));
 
-            String page = ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_REGISTRATION);
-            if (Validation.isCorrectEmail(email)) {
-                if (Validation.isCorrectLogin(login)) {
-                    if (Validation.isCorrectPassword(password)) {
-                        if (Validation.isCorrectUserName(firstName) && Validation.isCorrectUserName(lastName)) {
-                            if (userService.checkIsLoginFree(login)) {
-                                if (userService.checkIsEmailFree(email)) {
-                                    User user = new User();
-                                    user.setLogin(login);
-                                    user.setPassword(BCryptHash.hashPassword(password));
-                                    user.setEmail(email);
-                                    user.setFirstName(firstName);
-                                    user.setLastName(lastName);
-                                    user.setRegistrationDate(Date.valueOf(LocalDate.now()));
-                                    user.setAccount(BigDecimal.valueOf(50));
-                                    user.setRole(UserRole.USER);
-                                    userService.signUp(user);
-                                    page = ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_LOGIN);
+                String page = "redirect " + ConstantURL.SIGNUP;
+                if (Validation.isCorrectEmail(email)) {
+                    if (Validation.isCorrectLogin(login)) {
+                        if (Validation.isCorrectPassword(password)) {
+                            if (Validation.isCorrectUserName(firstName) && Validation.isCorrectUserName(lastName)) {
+                                if (userService.checkIsLoginFree(login)) {
+                                    if (userService.checkIsEmailFree(email)) {
+                                        User user = new User();
+                                        user.setLogin(login);
+                                        user.setPassword(BCryptHash.hashPassword(password));
+                                        user.setEmail(email);
+                                        user.setFirstName(firstName);
+                                        user.setLastName(lastName);
+                                        user.setRegistrationDate(Date.valueOf(LocalDate.now()));
+                                        user.setAccount(BigDecimal.valueOf(50));
+                                        user.setRole(UserRole.USER);
+                                        userService.signUp(user);
+                                        formService.update(formId);
+                                        page = ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_LOGIN);
+                                    } else {
+                                        request.setAttribute(ConstantAttributes.ERROR_WRONG_EMAIL, messageManager
+                                                .getMessage(ConstantMessages.PATH_ERROR_EXISTING_EMAIL));
+                                    }
                                 } else {
-                                    request.setAttribute(ConstantAttributes.ERROR_WRONG_EMAIL, messageManager
-                                            .getMessage(ConstantMessages.PATH_ERROR_EXISTING_EMAIL));
+                                    request.setAttribute(ConstantAttributes.ERROR_WRONG_LOGIN, messageManager
+                                            .getMessage(ConstantMessages.PATH_ERROR_EXISTING_LOGIN));
                                 }
                             } else {
-                                request.setAttribute(ConstantAttributes.ERROR_WRONG_LOGIN, messageManager
-                                        .getMessage(ConstantMessages.PATH_ERROR_EXISTING_LOGIN));
+                                request.setAttribute(ConstantAttributes.ERROR_WRONG_USER_NAME, messageManager.
+                                        getMessage(ConstantMessages.PATH_ERROR_WRONG_USER_NAME));
                             }
                         } else {
-                            request.setAttribute(ConstantAttributes.ERROR_WRONG_USER_NAME, messageManager.
-                                    getMessage(ConstantMessages.PATH_ERROR_WRONG_USER_NAME));
+                            request.setAttribute(ConstantAttributes.ERROR_WRONG_PASSWORD, messageManager.
+                                    getMessage(ConstantMessages.PATH_ERROR_WRONG_PASSWORD));
                         }
                     } else {
-                        request.setAttribute(ConstantAttributes.ERROR_WRONG_PASSWORD, messageManager.
-                                getMessage(ConstantMessages.PATH_ERROR_WRONG_PASSWORD));
+                        request.setAttribute(ConstantAttributes.ERROR_WRONG_LOGIN, messageManager.
+                                getMessage(ConstantMessages.PATH_ERROR_WRONG_LOGIN));
                     }
                 } else {
-                    request.setAttribute(ConstantAttributes.ERROR_WRONG_LOGIN, messageManager.
-                            getMessage(ConstantMessages.PATH_ERROR_WRONG_LOGIN));
+                    request.setAttribute(ConstantAttributes.ERROR_WRONG_EMAIL, messageManager
+                            .getMessage(ConstantMessages.PATH_ERROR_WRONG_EMAIL));
                 }
-            } else {
-                request.setAttribute(ConstantAttributes.ERROR_WRONG_EMAIL, messageManager
-                        .getMessage(ConstantMessages.PATH_ERROR_WRONG_EMAIL));
+                return page;
             }
-            return page;
+            return ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_LOGIN);
         } catch (ServiceException e) {
             throw new ControllerException(e);
         }
@@ -155,15 +194,22 @@ public class UserController {
 
     @RequestMappingMethod(path = "/signout")
     public String signOut(HttpServletRequest request) {
-        HttpSession session = request.getSession(true);
-        session.setAttribute(ConstantAttributes.USER, null);
+        HttpSession httpSession = request.getSession(true);
+        httpSession.setAttribute(ConstantAttributes.USER, null);
+        String uri = request.getRequestURI();
+        if(ValidURI.validURI(uri)){
+            httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,uri);
+        }
         return ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_HOME);
     }
 
     @RequestMappingMethod(path = "/forgotPassword")
     public String forgotPassword(HttpServletRequest request) {
         HttpSession httpSession = request.getSession();
-        httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,"/cafe/user/forgotPassword");
+        String uri = request.getRequestURI();
+        if(ValidURI.validURI(uri)){
+            httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,uri);
+        }
         return ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_RECOVERY_PASSWORD);
     }
 
@@ -205,21 +251,21 @@ public class UserController {
     @RequestMappingMethod(path = "/recoveryNewPasswordForm")
     public String recoveryNewPassword(HttpServletRequest request) throws ControllerException {
         try {
-            HttpSession httpSession = request.getSession();
-            String login = (String) httpSession.getAttribute(ConstantParametrs.LOGIN);
-            String newPassword = request.getParameter(ConstantParametrs.PASSWORD);
-            request.setAttribute(ConstantAttributes.ERROR_WRONG_PASSWORD, null);
-            MessageManager messageManager = MessageManager.defineLocale((String) httpSession.getAttribute(
-                    ConstantAttributes.CHANGE_LANGUAGE));
-            String page = ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_RECOVERY_NEW_PASSWORD);
-            if (Validation.isCorrectPassword(newPassword)) {
-                userService.saveNewPassword(login, BCryptHash.hashPassword(newPassword));
-                page = ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_LOGIN);
-            } else {
-                request.setAttribute(ConstantAttributes.ERROR_WRONG_PASSWORD, messageManager.
-                        getMessage(ConstantMessages.PATH_ERROR_WRONG_PASSWORD));
-            }
-            return page;
+                HttpSession httpSession = request.getSession();
+                String login = (String) httpSession.getAttribute(ConstantParametrs.LOGIN);
+                String newPassword = request.getParameter(ConstantParametrs.PASSWORD);
+                request.setAttribute(ConstantAttributes.ERROR_WRONG_PASSWORD, null);
+                MessageManager messageManager = MessageManager.defineLocale((String) httpSession.getAttribute(
+                        ConstantAttributes.CHANGE_LANGUAGE));
+                String page = ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_RECOVERY_NEW_PASSWORD);
+                if (Validation.isCorrectPassword(newPassword)) {
+                    userService.saveNewPassword(login, BCryptHash.hashPassword(newPassword));
+                    page = ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_LOGIN);
+                } else {
+                    request.setAttribute(ConstantAttributes.ERROR_WRONG_PASSWORD, messageManager.
+                            getMessage(ConstantMessages.PATH_ERROR_WRONG_PASSWORD));
+                }
+                return page;
         } catch (ServiceException e) {
             throw new ControllerException(e);
         }
@@ -242,67 +288,82 @@ public class UserController {
     }
 
     @RequestMappingMethod(path = "/editProfile")
-    public String editProfile(HttpServletRequest request) {
-        HttpSession httpSession = request.getSession();
-        httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,"/cafe/user/editProfile");
-        return ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_EDIT_PROFILE);
+    public String editProfile(HttpServletRequest request) throws ControllerException {
+        try {
+            HttpSession httpSession = request.getSession();
+            String uri = request.getRequestURI();
+            if (ValidURI.validURI(uri)) {
+                httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE, uri);
+            }
+            int formId = formService.createForm();
+            request.setAttribute(ConstantParametrs.FORM_ID, formId);
+            return ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_EDIT_PROFILE);
+        }
+        catch (ServiceException exc){
+            throw new ControllerException(exc);
+        }
     }
 
     @RequestMappingMethod(path = "/editprofileForm")
     public String editProfileForm(HttpServletRequest request) throws ControllerException {
         try {
-            HttpSession httpSession = request.getSession();
-            User user = (User) httpSession.getAttribute(ConstantAttributes.USER);
-            String login = request.getParameter(ConstantParametrs.LOGIN);
-            if (login.isEmpty()) {
-                login = user.getLogin();
-            }
-            String password = request.getParameter(ConstantParametrs.PASSWORD);
-            if (password.isEmpty()) {
-                password = user.getPassword();
-            }
-            String firstName = request.getParameter(ConstantParametrs.FIRST_NAME);
-            if (firstName.isEmpty()) {
-                firstName = user.getFirstName();
-            }
-            String lastName = request.getParameter(ConstantParametrs.LAST_NAME);
-            if (lastName.isEmpty()) {
-                lastName = user.getLastName();
-            }
+            int formId = Integer.parseInt(request.getParameter(ConstantParametrs.FORM_ID));
+            if(!formService.getById(formId)) {
+                HttpSession httpSession = request.getSession();
+                User user = (User) httpSession.getAttribute(ConstantAttributes.USER);
+                String login = request.getParameter(ConstantParametrs.LOGIN);
+                if (login.isEmpty()) {
+                    login = user.getLogin();
+                }
+                String password = request.getParameter(ConstantParametrs.PASSWORD);
+                if (password.isEmpty()) {
+                    password = user.getPassword();
+                }
+                String firstName = request.getParameter(ConstantParametrs.FIRST_NAME);
+                if (firstName.isEmpty()) {
+                    firstName = user.getFirstName();
+                }
+                String lastName = request.getParameter(ConstantParametrs.LAST_NAME);
+                if (lastName.isEmpty()) {
+                    lastName = user.getLastName();
+                }
 
-            request.setAttribute(ConstantAttributes.ERROR_WRONG_LOGIN, null);
-            request.setAttribute(ConstantAttributes.ERROR_WRONG_PASSWORD, null);
-            request.setAttribute(ConstantAttributes.ERROR_WRONG_USER_NAME, null);
+                request.setAttribute(ConstantAttributes.ERROR_WRONG_LOGIN, null);
+                request.setAttribute(ConstantAttributes.ERROR_WRONG_PASSWORD, null);
+                request.setAttribute(ConstantAttributes.ERROR_WRONG_USER_NAME, null);
 
-            MessageManager messageManager = MessageManager.defineLocale((String) httpSession.getAttribute(
-                    ConstantAttributes.CHANGE_LANGUAGE));
+                MessageManager messageManager = MessageManager.defineLocale((String) httpSession.getAttribute(
+                        ConstantAttributes.CHANGE_LANGUAGE));
 
-            String page = ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_EDIT_PROFILE);
-            if (Validation.isCorrectLogin(login)) {
-                if (Validation.isCorrectPassword(password)) {
-                    if (Validation.isCorrectUserName(firstName) && Validation.isCorrectUserName(lastName)) {
-                        if (userService.checkIsLoginFree(login) || user.getLogin().equals(login)) {
-                            User updateUser = userService.updateProfileUser(user.getId(), login, BCryptHash.hashPassword(password), firstName, lastName);
-                            httpSession.setAttribute(ConstantAttributes.USER, updateUser);
-                            httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,"/cafe/user/profile");
-                            page = ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_PROFILE);
+                String page = "redirect " + ConstantURL.EDIT_PROFILE;
+                if (Validation.isCorrectLogin(login)) {
+                    if (Validation.isCorrectPassword(password)) {
+                        if (Validation.isCorrectUserName(firstName) && Validation.isCorrectUserName(lastName)) {
+                            if (userService.checkIsLoginFree(login) || user.getLogin().equals(login)) {
+                                User updateUser = userService.updateProfileUser(user.getId(), login, BCryptHash.hashPassword(password), firstName, lastName);
+                                httpSession.setAttribute(ConstantAttributes.USER, updateUser);
+                                httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE, "/cafe/user/profile");
+                                page = ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_PROFILE);
+                                formService.update(formId);
+                            } else {
+                                request.setAttribute(ConstantAttributes.ERROR_WRONG_LOGIN, messageManager
+                                        .getMessage(ConstantMessages.PATH_ERROR_EXISTING_LOGIN));
+                            }
                         } else {
-                            request.setAttribute(ConstantAttributes.ERROR_WRONG_LOGIN, messageManager
-                                    .getMessage(ConstantMessages.PATH_ERROR_EXISTING_LOGIN));
+                            request.setAttribute(ConstantAttributes.ERROR_WRONG_USER_NAME, messageManager.
+                                    getMessage(ConstantMessages.PATH_ERROR_WRONG_USER_NAME));
                         }
                     } else {
-                        request.setAttribute(ConstantAttributes.ERROR_WRONG_USER_NAME, messageManager.
-                                getMessage(ConstantMessages.PATH_ERROR_WRONG_USER_NAME));
+                        request.setAttribute(ConstantAttributes.ERROR_WRONG_PASSWORD, messageManager.
+                                getMessage(ConstantMessages.PATH_ERROR_WRONG_PASSWORD));
                     }
                 } else {
-                    request.setAttribute(ConstantAttributes.ERROR_WRONG_PASSWORD, messageManager.
-                            getMessage(ConstantMessages.PATH_ERROR_WRONG_PASSWORD));
+                    request.setAttribute(ConstantAttributes.ERROR_WRONG_LOGIN, messageManager.
+                            getMessage(ConstantMessages.PATH_ERROR_WRONG_LOGIN));
                 }
-            } else {
-                request.setAttribute(ConstantAttributes.ERROR_WRONG_LOGIN, messageManager.
-                        getMessage(ConstantMessages.PATH_ERROR_WRONG_LOGIN));
+                return page;
             }
-            return page;
+            return ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_PROFILE);
         } catch (ServiceException e) {
             throw new ControllerException(e);
         }
@@ -312,7 +373,10 @@ public class UserController {
     public String showAllUsers(HttpServletRequest request) throws ControllerException {
         try {
             HttpSession httpSession = request.getSession();
-            httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,"/cafe/user/allUsers");
+            String uri = request.getRequestURI();
+            if(ValidURI.validURI(uri)){
+                httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,uri);
+            }
             List<User> users = userService.getAll();
             request.setAttribute("users", users);
             return ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_ALL_USERS);
@@ -325,11 +389,18 @@ public class UserController {
     public String editUser(HttpServletRequest request) throws ControllerException {
         try {
             HttpSession httpSession = request.getSession();
-            httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,"/cafe/user/editUser");
+            String uri = request.getRequestURI();
+            if(ValidURI.validURI(uri)){
+                httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,uri);
+            }
             int userId = Integer.parseInt(request.getParameter(ConstantAttributes.EDIT_USER));
             User editUser = userService.getByID(userId);
+            String page = ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_EDIT_USER);
+            if(editUser == null){
+                page = "redirect " + ConstantURL.ALL_USERS;
+            }
             httpSession.setAttribute(ConstantAttributes.EDIT_USER, editUser);
-            return ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_EDIT_USER);
+            return page;
         } catch (ServiceException e) {
             throw new ControllerException(e);
         }
@@ -339,7 +410,8 @@ public class UserController {
     public String editUserForm(HttpServletRequest request) throws ControllerException {
         try {
             HttpSession httpSession = request.getSession();
-            User user = (User) httpSession.getAttribute(ConstantAttributes.EDIT_USER);
+            User user = (User) httpSession.getAttribute(ConstantAttributes.USER);
+            User editUser = (User) httpSession.getAttribute(ConstantAttributes.EDIT_USER);
             BigDecimal account = BigDecimal.valueOf(Float.parseFloat(request.getParameter(ConstantParametrs.ACCOUNT)));
             int pointsLoyalty = new Integer(request.getParameter(ConstantParametrs.POINTS_LOYALTY));
             Boolean blocked = new Boolean(request.getParameter(ConstantParametrs.STATUS_USER));
@@ -352,10 +424,13 @@ public class UserController {
             String page = ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_EDIT_USER);
             if (Validation.isCorrectAccount(account)) {
                 if (Validation.isCorrectPointsLoyalty(pointsLoyalty)) {
-                    user.setAccount(account);
-                    user.setPointsLoyalty(pointsLoyalty);
-                    user.setBlocked(blocked);
-                    userService.updateUserByAdmin(user);
+                    editUser.setAccount(account);
+                    editUser.setPointsLoyalty(pointsLoyalty);
+                    editUser.setBlocked(blocked);
+                    userService.updateUserByAdmin(editUser);
+                    if(editUser.getId() == user.getId()){
+                        httpSession.setAttribute(ConstantAttributes.USER,editUser);
+                    }
                     httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,"/cafe/user/allUsers");
                     page = ConstantURL.ALL_USERS;
                 } else {
@@ -375,10 +450,12 @@ public class UserController {
     @RequestMappingMethod(path = "/deleteUser")
     public String deleteUser(HttpServletRequest request) throws ControllerException {
         try {
-            HttpSession httpSession = request.getSession();
-            User user = (User) httpSession.getAttribute(ConstantAttributes.EDIT_USER);
-            userService.deleteUser(user);
-            return ConstantURL.ALL_USERS;
+                HttpSession httpSession = request.getSession();
+                User user = (User) httpSession.getAttribute(ConstantAttributes.EDIT_USER);
+                if (!(userService.getByID(user.getId()) == null)) {
+                    userService.deleteUser(user);
+                }
+                return "redirect " + ConstantURL.ALL_USERS;
         } catch (Exception e) {
             throw new ControllerException(e);
         }
@@ -386,13 +463,19 @@ public class UserController {
     @RequestMappingMethod(path = "/blocking")
     public String showBlockingMessage(HttpServletRequest request) throws ControllerException{
         HttpSession httpSession = request.getSession();
-        httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,"/cafe/user/blocking");
+        String uri = request.getRequestURI();
+        if(ValidURI.validURI(uri)){
+            httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,uri);
+        }
         return ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_BLOCKING);
     }
     @RequestMappingMethod(path = "/authorization")
     public String showAuthorizationMessage(HttpServletRequest request) throws ControllerException{
         HttpSession httpSession = request.getSession();
-        httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,"/cafe/user/authorization");
+        String uri = request.getRequestURI();
+        if(ValidURI.validURI(uri)){
+            httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,uri);
+        }
         return ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_AUTHORIZATION);
     }
 }

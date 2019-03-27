@@ -14,6 +14,7 @@ import com.gmail.bukato23.util.Validation;
 import com.gmail.bukato23.util.constant.*;
 import com.gmail.bukato23.util.property.ConfigurationManager;
 import com.gmail.bukato23.util.property.MessageManager;
+import com.gmail.bukato23.util.ValidURI;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -34,7 +35,10 @@ public class OrderController {
     public String addToCart(HttpServletRequest request) throws ControllerException {
         try {
             HttpSession httpSession = request.getSession();
-            httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE, "/cafe/order/addToCart");
+            String uri = request.getRequestURI();
+            if(ValidURI.validURI(uri)){
+                httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,uri);
+            }
             Map<Product, Integer> products = (Map<Product, Integer>) httpSession.getAttribute(ConstantAttributes.CART);
             if (products == null) {
                 products = new HashMap<>();
@@ -68,7 +72,10 @@ public class OrderController {
     @RequestMappingMethod(path = "/cart")
     public String showCart(HttpServletRequest request) throws ControllerException {
         HttpSession httpSession = request.getSession();
-        httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE, "/cafe/order/cart");
+        String uri = request.getRequestURI();
+        if(ValidURI.validURI(uri)){
+            httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,uri);
+        }
         Map<Product, Integer> products = (Map<Product, Integer>) httpSession.getAttribute(ConstantAttributes.CART);
         httpSession.setAttribute(ConstantAttributes.TOTAL_PRICE, null);
         if (products != null) {
@@ -103,7 +110,10 @@ public class OrderController {
     @RequestMappingMethod(path = "/checkout")
     public String checkout(HttpServletRequest request) throws ControllerException {
         HttpSession httpSession = request.getSession();
-        httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE, "/cafe/order/checkout");
+        String uri = request.getRequestURI();
+        if(ValidURI.validURI(uri)){
+            httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,uri);
+        }
         return ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_CHECKOUT);
     }
 
@@ -116,12 +126,9 @@ public class OrderController {
             User user = (User) httpSession.getAttribute(ConstantAttributes.USER);
             Timestamp timeOrder = new Timestamp(System.currentTimeMillis());
             PaymentType paymentType = PaymentType.fromID(Integer.parseInt(request.getParameter(ConstantParametrs.PAYMENT_TYPE)));
-            System.out.println(request.getParameter(ConstantParametrs.TIME_RECEIPT));
             DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
             Date date = formatter.parse(request.getParameter(ConstantParametrs.TIME_RECEIPT));
-            System.out.println(date);
             Timestamp timeReceipt = new Timestamp(date.getTime());
-            System.out.println(timeReceipt);
             boolean usePoints = Boolean.parseBoolean(request.getParameter(ConstantParametrs.USE_POINTS));
 
             request.setAttribute(ConstantAttributes.ERROR_WRONG_TIME, null);
@@ -136,8 +143,9 @@ public class OrderController {
                     factor = 1.0 * points / 100;
                     user.setPointsLoyalty(0);
                 }
+                total = total.multiply(BigDecimal.valueOf(factor));
                 if (paymentType == PaymentType.ONLINE_ACCOUNT) {
-                    if (user.getAccount().compareTo(total.multiply(BigDecimal.valueOf(factor))) >= 0) {
+                    if (user.getAccount().compareTo(total) >= 0) {
                         page = makeOrderCommon(httpSession, products, user, paymentType, total, timeOrder, timeReceipt);
                     } else {
                         request.setAttribute(ConstantAttributes.ERROR_WRONG_PAYMENT_TYPE, messageManager
@@ -180,7 +188,8 @@ public class OrderController {
         httpSession.setAttribute(ConstantAttributes.CART, null);
         httpSession.setAttribute(ConstantAttributes.TOTAL_PRICE, null);
         httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE, "/cafe/user/profile");
-        return ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_PROFILE);
+        return "redirect /cafe/user/profile";
+ //       return ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_PROFILE);
     }
 
     @RequestMappingMethod(path = "/allOrders")
@@ -194,6 +203,12 @@ public class OrderController {
                 User user = userService.getByID(order.getUserId());
                 userOrder.add(user);
             }
+            List<Map<Product,Integer>> myProductsForOrders = new ArrayList<>();
+            for(Order order : allOrders){
+                Map<Product,Integer> productIntegerMap = orderService.getProductsByOrderId(order.getId());
+                myProductsForOrders.add(productIntegerMap);
+            }
+            request.setAttribute(ConstantAttributes.MY_PRODUCTS,myProductsForOrders);
             request.setAttribute(ConstantParametrs.ALL_ORDERS, allOrders);
             request.setAttribute(ConstantParametrs.USER_ODER, userOrder);
             return ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_ALL_ORDERS);
@@ -206,7 +221,10 @@ public class OrderController {
     public String editOrder(HttpServletRequest request) throws ControllerException{
         try {
             HttpSession httpSession = request.getSession();
-            httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE, "/cafe/order/editOrder");
+            String uri = request.getRequestURI();
+            if(ValidURI.validURI(uri)){
+                httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,uri);
+            }
             int orderId = Integer.parseInt(request.getParameter(ConstantAttributes.EDIT_ORDER));
             Order editOrder = orderService.getById(orderId);
             httpSession.setAttribute(ConstantAttributes.EDIT_ORDER, editOrder);
@@ -236,9 +254,18 @@ public class OrderController {
     public String showMyOrders(HttpServletRequest request) throws ControllerException{
         try {
             HttpSession httpSession = request.getSession();
-            httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE, "/cafe/order/myOrders");
+            String uri = request.getRequestURI();
+            if(ValidURI.validURI(uri)){
+                httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,uri);
+            }
             User user = (User) httpSession.getAttribute(ConstantAttributes.USER);
             List<Order>  myOrders = orderService.getByUserId(user.getId());
+            List<Map<Product,Integer>> myProductsForOrders = new ArrayList<>();
+            for(Order order : myOrders){
+                Map<Product,Integer> productIntegerMap = orderService.getProductsByOrderId(order.getId());
+                myProductsForOrders.add(productIntegerMap);
+            }
+            httpSession.setAttribute(ConstantAttributes.MY_PRODUCTS,myProductsForOrders);
             httpSession.setAttribute(ConstantAttributes.MY_ORDERS, myOrders);
             return ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_MY_ORDERS);
         } catch (ServiceException e) {
@@ -248,7 +275,35 @@ public class OrderController {
 
     @RequestMappingMethod(path = "/rateOrder")
     public String rateOrder(HttpServletRequest request) throws ControllerException{
-        return null;
+        try {
+            HttpSession httpSession = request.getSession();
+            String uri = request.getRequestURI();
+            if(ValidURI.validURI(uri)){
+                httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,uri);
+            }
+            int orderId = Integer.parseInt(request.getParameter(ConstantAttributes.RATE_ORDER));
+            Order rateOrder = orderService.getById(orderId);
+            httpSession.setAttribute(ConstantAttributes.RATE_ORDER, rateOrder);
+            return ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_RATE_ORDER);
+        }
+        catch (ServiceException exc){
+            throw new ControllerException(exc);
+        }
+    }
+
+    @RequestMappingMethod(path = "/rateOrderForm")
+    public String rateOrderForm(HttpServletRequest request) throws ControllerException{
+        try {
+            HttpSession httpSession = request.getSession();
+            Rating rating = Rating.fromID(Integer.parseInt(request.getParameter(ConstantParametrs.RATING_ORDER)));
+            Order  order =  (Order) httpSession.getAttribute(ConstantAttributes.RATE_ORDER);
+            order.setRating(rating);
+            orderService.updateOrderByAdmin(order);
+            return "redirect " + ConstantURL.MY_ORDERS;
+        }
+        catch (ServiceException exc){
+            throw new ControllerException(exc);
+        }
     }
 
 }

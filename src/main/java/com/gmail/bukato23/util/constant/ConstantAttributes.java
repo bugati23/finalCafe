@@ -25,4 +25,6 @@ public class ConstantAttributes {
     public static final String ERROR_WRONG_PAYMENT_TYPE = "errorWrongPaymentType";
     public static final String EDIT_ORDER = "editOrder";
     public static final String MY_ORDERS = "myOrders";
+    public static final String MY_PRODUCTS = "myProducts";
+    public static final String RATE_ORDER = "rateOrder";
 }

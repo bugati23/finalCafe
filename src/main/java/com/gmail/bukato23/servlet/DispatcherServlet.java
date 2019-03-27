@@ -1,9 +1,6 @@
 package com.gmail.bukato23.servlet;
 
-import com.gmail.bukato23.controller.Controller;
-import com.gmail.bukato23.controller.EndpointMethod;
-import com.gmail.bukato23.controller.RequestMappingClass;
-import com.gmail.bukato23.controller.RequestMappingMethod;
+import com.gmail.bukato23.controller.*;
 import com.gmail.bukato23.dao.connectionpool.ConnectionPoolFactory;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -13,6 +10,7 @@ import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletRequestWrapper;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.lang.reflect.Method;
@@ -61,8 +59,14 @@ public class DispatcherServlet extends HttpServlet {
             }
             String view = endpointMethod.invoke(request);
             while (view.startsWith("redirect ")) {
-                path = view.substring("redirect ".length());
-                endpointMethod = map.get(path);
+                String pathRedirect = view.substring("redirect ".length());
+//                HttpServletRequestWrapper requestWrapperRedirect = new HttpServletRequestWrapper(request) {//
+//                    @Override//
+//                    public String getRequestURI() {
+//                        return pathRedirect;
+//                    }
+//                };//
+                endpointMethod = map.get(pathRedirect);
                 view = endpointMethod.invoke(request);
             }
             RequestDispatcher requestDispatcher = request.getRequestDispatcher(view);
@@ -85,14 +89,26 @@ public class DispatcherServlet extends HttpServlet {
                 classMapping = requestMappingClass.path();
             }
             for (Method method : controller.getClass().getDeclaredMethods()) {
+                EndpointMethod endpointMethod = null;
                 if (method.isAnnotationPresent(RequestMappingMethod.class)) {
                     RequestMappingMethod requestMappingMethod = method.getAnnotation(RequestMappingMethod.class);
                     methodMapping = requestMappingMethod.path();
+
+                    endpointMethod = new EndpointMethod(method, controller);
+
+
                     urlToEndpointMethodMap.put(
                             servletMapping + classMapping + methodMapping,
-                            new EndpointMethod(method, controller)
+                            endpointMethod
                     );
                 }
+//                if(method.isAnnotationPresent(SafeMethod.class)){
+//                    endpointMethod.setSafeMethod(true);
+//                }
+//                urlToEndpointMethodMap.put(
+//                            servletMapping + classMapping + methodMapping,
+//                            endpointMethod
+//                );
             }
         }
         return urlToEndpointMethodMap;

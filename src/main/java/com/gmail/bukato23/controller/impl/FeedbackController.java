@@ -13,6 +13,7 @@ import com.gmail.bukato23.util.Validation;
 import com.gmail.bukato23.util.constant.*;
 import com.gmail.bukato23.util.property.ConfigurationManager;
 import com.gmail.bukato23.util.property.MessageManager;
+import com.gmail.bukato23.util.ValidURI;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -28,7 +29,10 @@ public class FeedbackController {
         UserService userService = ServiceFactory.getInstance().getUserService();
         try {
             HttpSession httpSession = request.getSession();
-            httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,"/cafe/feedback/reviews");
+            String uri = request.getRequestURI();
+            if(ValidURI.validURI(uri)){
+                httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,uri);
+            }
             List<User> userFeedback = new ArrayList<>();
             List<Feedback> reviews = feedbackService.getAll();
             for (Feedback feedback : reviews) {
@@ -47,7 +51,10 @@ public class FeedbackController {
     @RequestMappingMethod(path = "/addReview")
     public String addreview(HttpServletRequest request) {
         HttpSession httpSession = request.getSession();
-        httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,"/cafe/feedback/addReview");
+        String uri = request.getRequestURI();
+        if(ValidURI.validURI(uri)){
+            httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,uri);
+        }
         return ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_ADD_REVIEW);
     }
 

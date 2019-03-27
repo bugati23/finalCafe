@@ -72,6 +72,7 @@ public class JdbcDaoFactory implements DaoFactory, TransactionalDaoFactory {
         creators.put(Feedback.class, FeedbackDaoImpl::new);
         creators.put(Order.class, OrderDaoImpl::new);
         creators.put(OrderProduct.class, OrderProductDaoImpl::new);
+        creators.put(Form.class,FormDaoImpl::new);
     }
 
     public static JdbcDaoFactory getInstance() {

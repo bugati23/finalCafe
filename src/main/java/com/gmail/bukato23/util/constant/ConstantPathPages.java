@@ -23,4 +23,5 @@ public class ConstantPathPages {
     public static final String PATH_PAGE_AUTHORIZATION = "path.page.authorization";
     public static final String PATH_PAGE_EDIT_ORDER = "path.page.editOrder";
     public static final String PATH_PAGE_MY_ORDERS = "path.page.myOrders";
+    public static final String PATH_PAGE_RATE_ORDER = "path.page.rateOrder";
 }
