@@ -114,5 +114,11 @@ CONSTRAINT fk_order_product_to_product FOREIGN KEY (product_id) REFERENCES produ
 ENGINE = InnoDB DEFAULT CHARACTER SET = utf8
 COLLATE = utf8_general_ci;
 
+CREATE TABLE IF NOT EXISTS cafe_form(
+id INT PRIMARY KEY AUTO_INCREMENT UNIQUE,
+fulfilled TINYINT(1) NOT NULL)
+ENGINE = InnoDB DEFAULT CHARACTER SET = utf8
+COLLATE = utf8_general_ci;
+
 ALTER USER 'root'@'localhost' IDENTIFIED WITH mysql_native_password BY 'nikita1234'
 
