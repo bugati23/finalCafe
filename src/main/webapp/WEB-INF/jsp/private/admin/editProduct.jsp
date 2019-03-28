@@ -26,7 +26,7 @@
         <label style="color:#721c24">${errorWrongDescription}</label><br>
         <input id="pict" name="pict" type="url" value="<c:out value="${editProduct.picture}"/>" placeholder="<fmt:message key="label.enterImage"/>" minlength="1" required>
         <label style="color:#721c24">${errorWrongImage}</label><br>
-        <input id="price" name="price" type="number" value="<c:out value="${editProduct.price}"/>" placeholder="<fmt:message key="label.enterPrice"/>" min="0" step="0.01" required>
+        <input id="price" name="price" type="number" value="<c:out value="${editProduct.price}"/>" placeholder="<fmt:message key="label.enterPrice"/>(BYN)" min="0" step="0.01" required>
         <label style="color:#721c24">${errorWrongPrice}</label><br>
         <c:choose>
             <c:when test="${editProduct.availability == false}">
@@ -60,8 +60,6 @@
         <input id="submit" type="submit" value="<fmt:message key="label.change"/>"/>
     </fieldset>
     <a href="${pageContext.servletContext.contextPath}/cafe/product/deleteProduct"><fmt:message key="label.delete"/> </a>
-    <a href="${pageContext.servletContext.contextPath}/cafe/user/langen"><img src="${pageContext.servletContext.contextPath}/assets/images/icons/icons8-great-britain-48.png"></a>
-    <a href="${pageContext.servletContext.contextPath}/cafe/user/langru"><img src="${pageContext.servletContext.contextPath}/assets/images/icons/icons8-russian-federation-48.png"></a>
 </form>
 </body>
 </html>

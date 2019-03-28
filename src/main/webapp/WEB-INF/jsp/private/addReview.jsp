@@ -69,6 +69,7 @@
                 <button type="submit" formaction="${pageContext.servletContext.contextPath}/cafe/feedback/addReviewForm" class="btn3 flex-c-m size36 txt11 trans-0-4">
                     <fmt:message key="label.send"/>
                 </button>
+                <input type="hidden" name="formId" value="${formId}">
             </div>
         </form>
     </div>

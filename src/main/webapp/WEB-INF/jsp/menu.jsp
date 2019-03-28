@@ -82,7 +82,7 @@
 							</span>
 
 							<span class="txt22 m-t-20">
-								<c:out value="${elem.price}"/>
+								<c:out value="${elem.price}(BYN)"/>
 							</span>
 							<form action="${pageContext.servletContext.contextPath}/cafe/order/addToCart" method="post">
 								<p><fmt:message key="label.amount"/>:</p>
@@ -134,7 +134,7 @@
 										 </span>
 
                                         <span class="txt22 m-t-20">
-								           <c:out value="${elem.price}"/>
+								           <c:out value="${elem.price}(BYN)"/>
 										 </span>
 										<form action="${pageContext.servletContext.contextPath}/cafe/order/addToCart" method="post">
 											<p><fmt:message key="label.amount"/>:</p>
@@ -185,7 +185,7 @@
 							             </span>
 
                                         <span class="txt22 m-t-20">
-								             <c:out value="${elem.price}"/>
+								             <c:out value="${elem.price}(BYN)"/>
 							             </span>
 										<form action="${pageContext.servletContext.contextPath}/cafe/order/addToCart" method="post">
 											<p><fmt:message key="label.amount"/>:</p>

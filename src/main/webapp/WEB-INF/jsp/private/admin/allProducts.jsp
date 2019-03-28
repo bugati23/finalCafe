@@ -82,7 +82,7 @@
                             <fmt:message key="label.description"/>: <c:out value="${elem.description}"/><br>
                             <fmt:message key="label.image"/>:<br>
                             <p><img src="${elem.picture}" width="200" height="100"></p>
-                            <fmt:message key="label.price"/>: <c:out value="${elem.price}"/><br>
+                            <fmt:message key="label.price"/>: <c:out value="${elem.price}(BYN)"/><br>
                             <fmt:message key="label.status"/>:
                             <c:choose>
                                 <c:when test="${elem.availability == false}">

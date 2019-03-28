@@ -26,7 +26,7 @@
         <label style="color:#721c24">${errorWrongDescription}</label><br>
         <input id="pict" name="pict" type="url" value="<c:out value="${addedProduct.pict}"/>" placeholder="<fmt:message key="label.enterImage"/>" minlength="1" required>
         <label style="color:#721c24">${errorWrongImage}</label><br>
-        <input id="price" name="price" type="number" value="<c:out value="${addedProduct.price}"/>" placeholder="<fmt:message key="label.enterPrice"/>" min="0" step="0.01" required>
+        <input id="price" name="price" type="number" value="<c:out value="${addedProduct.price}"/>" placeholder="<fmt:message key="label.enterPrice"/>(BYN)" min="0" step="0.01" required>
         <label style="color:#721c24">${errorWrongPrice}</label><br>
         <input type="radio" name="availabilityProduct" value="false"> <br> <fmt:message key="label.notAvailability"/><br>
         <input type="radio" name="availabilityProduct" value="true" checked> <br> <fmt:message key="label.availability"/><br>
@@ -35,7 +35,9 @@
         <input type="radio" name="categoryProduct" value="2" checked> <br> <fmt:message key="label.mainCourse"/><br>
         <input type="radio" name="categoryProduct" value="3"> <br> <fmt:message key="label.drink"/><br>
         <input id="submit" type="submit" value="<fmt:message key="label.add"/>"/>
+        <input type="hidden" name="formId" value="${formId}">
     </fieldset>
+    <a href="${pageContext.servletContext.contextPath}/cafe/user/profile"><fmt:message key="label.back"/></a>
     <a href="${pageContext.servletContext.contextPath}/cafe/user/langen"><img src="${pageContext.servletContext.contextPath}/assets/images/icons/icons8-great-britain-48.png"></a>
     <a href="${pageContext.servletContext.contextPath}/cafe/user/langru"><img src="${pageContext.servletContext.contextPath}/assets/images/icons/icons8-russian-federation-48.png"></a>
 </form>

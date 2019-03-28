@@ -112,7 +112,7 @@
                                         <br>
                                     </c:otherwise>
                                 </c:choose>
-                                <fmt:message key="label.totalPrice"/>: <c:out value="${elem.totalAmount}"/><br>
+                                <fmt:message key="label.totalPrice"/>: <c:out value="${elem.totalAmount}(BYN)"/><br>
                                 <fmt:message key="label.preoder"/>:
                                 <c:choose>
                                     <c:when test="${elem.preOder == true}">

@@ -81,7 +81,7 @@
                         <span class="info-item-mainmenu txt23">
                             <c:out value="${elem.email}"/><br>
                             <c:out value="${elem.firstName}"/> <c:out value="${elem.lastName}"/><br>
-                            <fmt:message key="label.account"/>: <c:out value="${elem.account}"/><br>
+                            <fmt:message key="label.account"/>: <c:out value="${elem.account}(BYN)"/><br>
                             <fmt:message key="label.pointsLoyalty"/>: <c:out value="${elem.pointsLoyalty}"/><br>
                             <fmt:message key="label.status"/>:
                             <c:choose>

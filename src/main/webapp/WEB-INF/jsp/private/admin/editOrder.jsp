@@ -38,9 +38,9 @@
             </c:otherwise>
         </c:choose>
         <input id="submit" type="submit" value="<fmt:message key="label.change"/>"/>
+        <input type="hidden" name="formId" value="${formId}">
+        <a href="${pageContext.servletContext.contextPath}/cafe/order/allOrders"><fmt:message key="label.back"/> </a>
     </fieldset>
-    <a href="${pageContext.servletContext.contextPath}/cafe/user/langen"><img src="${pageContext.servletContext.contextPath}/assets/images/icons/icons8-great-britain-48.png"></a>
-    <a href="${pageContext.servletContext.contextPath}/cafe/user/langru"><img src="${pageContext.servletContext.contextPath}/assets/images/icons/icons8-russian-federation-48.png"></a>
 </form>
 </body>
 </html>

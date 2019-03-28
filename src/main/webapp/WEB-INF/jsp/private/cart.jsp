@@ -91,14 +91,14 @@
 
                                     <span class="info-item-mainmenu txt23">
                                 <fmt:message key="label.amount"/>: <c:out value="${elem.value}"/><br>
-                                <fmt:message key="label.price"/>: <c:out value="${elem.key.price}"/><br>
+                                <fmt:message key="label.price"/>: <c:out value="${elem.key.price}(BYN)"/><br>
                             </span>
                                 </div>
                             </c:forEach>
                             <div class="item-mainmenu m-b-36">
                                 <div class="flex-w flex-b m-b-3">
                                     <label class="name-item-mainmenu txt36">
-                                        <fmt:message key="label.totalPrice"/>: <c:out value="${totalPrice}"/><br>
+                                        <fmt:message key="label.totalPrice"/>: <c:out value="${totalPrice}(BYN)"/><br>
                                     </label>
                                     <div class="line-item-mainmenu bg3-pattern"></div>
                                     <form action="${pageContext.servletContext.contextPath}/cafe/order/checkout">

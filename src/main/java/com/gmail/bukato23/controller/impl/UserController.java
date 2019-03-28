@@ -3,8 +3,6 @@ package com.gmail.bukato23.controller.impl;
 import com.gmail.bukato23.controller.ControllerException;
 import com.gmail.bukato23.controller.RequestMappingClass;
 import com.gmail.bukato23.controller.RequestMappingMethod;
-import com.gmail.bukato23.controller.SafeMethod;
-import com.gmail.bukato23.entity.Form;
 import com.gmail.bukato23.entity.User;
 import com.gmail.bukato23.entity.UserRole;
 import com.gmail.bukato23.service.FormService;
@@ -16,7 +14,6 @@ import com.gmail.bukato23.util.Validation;
 import com.gmail.bukato23.util.constant.*;
 import com.gmail.bukato23.util.property.ConfigurationManager;
 import com.gmail.bukato23.util.property.MessageManager;
-import com.gmail.bukato23.util.ValidURI;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -29,21 +26,18 @@ import java.util.List;
 public class UserController {
     private UserService userService = ServiceFactory.getInstance().getUserService();
     private FormService formService = ServiceFactory.getInstance().getFormService();
-   // @SafeMethod
+
     @RequestMappingMethod(path = "/profile")
     public String profile(HttpServletRequest request) {
         HttpSession httpSession = request.getSession();
-        String uri = request.getRequestURI();
-        httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,uri);
+        httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE, ConstantURL.PROFILE);
         return ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_PROFILE);
     }
 
-  //  @SafeMethod
     @RequestMappingMethod(path = "/home")
     public String home(HttpServletRequest request) {
         HttpSession httpSession = request.getSession();
-        String uri = request.getRequestURI();
-        httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,uri);
+        httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE, ConstantURL.HOME);
         return ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_HOME);
     }
 
@@ -51,16 +45,11 @@ public class UserController {
     public String signIn(HttpServletRequest request) throws ControllerException {
         try {
             HttpSession httpSession = request.getSession();
-            String uri = request.getRequestURI();
-
-            if (ValidURI.validURI(uri)) {
-                httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE, uri);
-            }
+            httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE, ConstantURL.SIGNIN);
             int formId = formService.createForm();
             request.setAttribute(ConstantParametrs.FORM_ID, formId);
             return ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_LOGIN);
-        }
-        catch (ServiceException exc){
+        } catch (ServiceException exc) {
             throw new ControllerException(exc);
         }
     }
@@ -69,7 +58,7 @@ public class UserController {
     public String signInForm(HttpServletRequest request) throws ControllerException {
         try {
             int formId = Integer.parseInt(request.getParameter(ConstantParametrs.FORM_ID));
-            if(!formService.getById(formId)) {
+            if (!formService.getById(formId)) {
                 String login = request.getParameter(ConstantParametrs.LOGIN);
                 String password = request.getParameter(ConstantParametrs.PASSWORD);
 
@@ -85,6 +74,7 @@ public class UserController {
                     User user = userService.signIn(login, password);
                     if (user != null) {
                         page = ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_HOME);
+                        httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE, ConstantURL.HOME);
                         httpSession.setAttribute(ConstantAttributes.USER, user);
                         formService.update(formId);
                     } else {
@@ -107,15 +97,11 @@ public class UserController {
     public String signUp(HttpServletRequest request) throws ControllerException {
         try {
             HttpSession httpSession = request.getSession();
-            String uri = request.getRequestURI();
-            if (ValidURI.validURI(uri)) {
-                httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE, uri);
-            }
+            httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE, ConstantURL.SIGNUP);
             int formId = formService.createForm();
-            request.setAttribute(ConstantParametrs.FORM_ID,formId);
+            request.setAttribute(ConstantParametrs.FORM_ID, formId);
             return ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_REGISTRATION);
-        }
-        catch (ServiceException exc){
+        } catch (ServiceException exc) {
             throw new ControllerException(exc);
         }
     }
@@ -124,7 +110,7 @@ public class UserController {
     public String signUpForm(HttpServletRequest request) throws ControllerException {
         try {
             int formId = Integer.parseInt(request.getParameter(ConstantParametrs.FORM_ID));
-            if(!formService.getById(formId)) {
+            if (!formService.getById(formId)) {
                 String login = request.getParameter(ConstantParametrs.LOGIN);
                 String password = request.getParameter(ConstantParametrs.PASSWORD);
                 String email = request.getParameter(ConstantParametrs.EMAIL);
@@ -158,6 +144,7 @@ public class UserController {
                                         user.setRole(UserRole.USER);
                                         userService.signUp(user);
                                         formService.update(formId);
+                                        httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE, ConstantURL.SIGNIN);
                                         page = ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_LOGIN);
                                     } else {
                                         request.setAttribute(ConstantAttributes.ERROR_WRONG_EMAIL, messageManager
@@ -191,25 +178,18 @@ public class UserController {
         }
     }
 
-
     @RequestMappingMethod(path = "/signout")
     public String signOut(HttpServletRequest request) {
         HttpSession httpSession = request.getSession(true);
         httpSession.setAttribute(ConstantAttributes.USER, null);
-        String uri = request.getRequestURI();
-        if(ValidURI.validURI(uri)){
-            httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,uri);
-        }
+        httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE, ConstantURL.SIGNOUT);
         return ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_HOME);
     }
 
     @RequestMappingMethod(path = "/forgotPassword")
     public String forgotPassword(HttpServletRequest request) {
         HttpSession httpSession = request.getSession();
-        String uri = request.getRequestURI();
-        if(ValidURI.validURI(uri)){
-            httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,uri);
-        }
+        httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE, ConstantURL.FORGOT);
         return ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_RECOVERY_PASSWORD);
     }
 
@@ -251,21 +231,22 @@ public class UserController {
     @RequestMappingMethod(path = "/recoveryNewPasswordForm")
     public String recoveryNewPassword(HttpServletRequest request) throws ControllerException {
         try {
-                HttpSession httpSession = request.getSession();
-                String login = (String) httpSession.getAttribute(ConstantParametrs.LOGIN);
-                String newPassword = request.getParameter(ConstantParametrs.PASSWORD);
-                request.setAttribute(ConstantAttributes.ERROR_WRONG_PASSWORD, null);
-                MessageManager messageManager = MessageManager.defineLocale((String) httpSession.getAttribute(
-                        ConstantAttributes.CHANGE_LANGUAGE));
-                String page = ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_RECOVERY_NEW_PASSWORD);
-                if (Validation.isCorrectPassword(newPassword)) {
-                    userService.saveNewPassword(login, BCryptHash.hashPassword(newPassword));
-                    page = ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_LOGIN);
-                } else {
-                    request.setAttribute(ConstantAttributes.ERROR_WRONG_PASSWORD, messageManager.
-                            getMessage(ConstantMessages.PATH_ERROR_WRONG_PASSWORD));
-                }
-                return page;
+            HttpSession httpSession = request.getSession();
+            String login = (String) httpSession.getAttribute(ConstantParametrs.LOGIN);
+            String newPassword = request.getParameter(ConstantParametrs.PASSWORD);
+            request.setAttribute(ConstantAttributes.ERROR_WRONG_PASSWORD, null);
+            MessageManager messageManager = MessageManager.defineLocale((String) httpSession.getAttribute(
+                    ConstantAttributes.CHANGE_LANGUAGE));
+            String page = ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_RECOVERY_NEW_PASSWORD);
+            if (Validation.isCorrectPassword(newPassword)) {
+                userService.saveNewPassword(login, BCryptHash.hashPassword(newPassword));
+                httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE, ConstantURL.SIGNIN);
+                page = ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_LOGIN);
+            } else {
+                request.setAttribute(ConstantAttributes.ERROR_WRONG_PASSWORD, messageManager.
+                        getMessage(ConstantMessages.PATH_ERROR_WRONG_PASSWORD));
+            }
+            return page;
         } catch (ServiceException e) {
             throw new ControllerException(e);
         }
@@ -275,7 +256,7 @@ public class UserController {
     public String setEnLang(HttpServletRequest request) {
         HttpSession session = request.getSession(true);
         session.setAttribute("changeLanguage", ConstantLocales.ENGLISH_LOCALE);
-        String currentGetPage = (String)session.getAttribute(ConstantAttributes.CURRENT_GET_PAGE);
+        String currentGetPage = (String) session.getAttribute(ConstantAttributes.CURRENT_GET_PAGE);
         return "redirect " + currentGetPage;
     }
 
@@ -283,7 +264,7 @@ public class UserController {
     public String setRuLang(HttpServletRequest request) {
         HttpSession session = request.getSession(true);
         session.setAttribute("changeLanguage", ConstantLocales.RUSSIAN_LOCALE);
-        String currentGetPage = (String)session.getAttribute(ConstantAttributes.CURRENT_GET_PAGE);
+        String currentGetPage = (String) session.getAttribute(ConstantAttributes.CURRENT_GET_PAGE);
         return "redirect " + currentGetPage;
     }
 
@@ -291,15 +272,11 @@ public class UserController {
     public String editProfile(HttpServletRequest request) throws ControllerException {
         try {
             HttpSession httpSession = request.getSession();
-            String uri = request.getRequestURI();
-            if (ValidURI.validURI(uri)) {
-                httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE, uri);
-            }
+            httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE, ConstantURL.EDIT_PROFILE);
             int formId = formService.createForm();
             request.setAttribute(ConstantParametrs.FORM_ID, formId);
             return ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_EDIT_PROFILE);
-        }
-        catch (ServiceException exc){
+        } catch (ServiceException exc) {
             throw new ControllerException(exc);
         }
     }
@@ -308,7 +285,7 @@ public class UserController {
     public String editProfileForm(HttpServletRequest request) throws ControllerException {
         try {
             int formId = Integer.parseInt(request.getParameter(ConstantParametrs.FORM_ID));
-            if(!formService.getById(formId)) {
+            if (!formService.getById(formId)) {
                 HttpSession httpSession = request.getSession();
                 User user = (User) httpSession.getAttribute(ConstantAttributes.USER);
                 String login = request.getParameter(ConstantParametrs.LOGIN);
@@ -342,7 +319,7 @@ public class UserController {
                             if (userService.checkIsLoginFree(login) || user.getLogin().equals(login)) {
                                 User updateUser = userService.updateProfileUser(user.getId(), login, BCryptHash.hashPassword(password), firstName, lastName);
                                 httpSession.setAttribute(ConstantAttributes.USER, updateUser);
-                                httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE, "/cafe/user/profile");
+                                httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE, ConstantURL.PROFILE);
                                 page = ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_PROFILE);
                                 formService.update(formId);
                             } else {
@@ -373,10 +350,7 @@ public class UserController {
     public String showAllUsers(HttpServletRequest request) throws ControllerException {
         try {
             HttpSession httpSession = request.getSession();
-            String uri = request.getRequestURI();
-            if(ValidURI.validURI(uri)){
-                httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,uri);
-            }
+            httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE, ConstantURL.ALL_USERS);
             List<User> users = userService.getAll();
             request.setAttribute("users", users);
             return ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_ALL_USERS);
@@ -389,14 +363,10 @@ public class UserController {
     public String editUser(HttpServletRequest request) throws ControllerException {
         try {
             HttpSession httpSession = request.getSession();
-            String uri = request.getRequestURI();
-            if(ValidURI.validURI(uri)){
-                httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,uri);
-            }
             int userId = Integer.parseInt(request.getParameter(ConstantAttributes.EDIT_USER));
             User editUser = userService.getByID(userId);
             String page = ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_EDIT_USER);
-            if(editUser == null){
+            if (editUser == null) {
                 page = "redirect " + ConstantURL.ALL_USERS;
             }
             httpSession.setAttribute(ConstantAttributes.EDIT_USER, editUser);
@@ -428,11 +398,10 @@ public class UserController {
                     editUser.setPointsLoyalty(pointsLoyalty);
                     editUser.setBlocked(blocked);
                     userService.updateUserByAdmin(editUser);
-                    if(editUser.getId() == user.getId()){
-                        httpSession.setAttribute(ConstantAttributes.USER,editUser);
+                    if (editUser.getId() == user.getId()) {
+                        httpSession.setAttribute(ConstantAttributes.USER, editUser);
                     }
-                    httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,"/cafe/user/allUsers");
-                    page = ConstantURL.ALL_USERS;
+                    page = "redirect " + ConstantURL.ALL_USERS;
                 } else {
                     request.setAttribute(ConstantAttributes.ERROR_WRONG_POINTS_LOYALTY, messageManager.
                             getMessage(ConstantMessages.PATH_ERROR_WRONG_POINTS_LOYALTY));
@@ -450,32 +419,28 @@ public class UserController {
     @RequestMappingMethod(path = "/deleteUser")
     public String deleteUser(HttpServletRequest request) throws ControllerException {
         try {
-                HttpSession httpSession = request.getSession();
-                User user = (User) httpSession.getAttribute(ConstantAttributes.EDIT_USER);
-                if (!(userService.getByID(user.getId()) == null)) {
-                    userService.deleteUser(user);
-                }
-                return "redirect " + ConstantURL.ALL_USERS;
+            HttpSession httpSession = request.getSession();
+            User user = (User) httpSession.getAttribute(ConstantAttributes.EDIT_USER);
+            if (!(userService.getByID(user.getId()) == null)) {
+                userService.deleteUser(user);
+            }
+            return "redirect " + ConstantURL.ALL_USERS;
         } catch (Exception e) {
             throw new ControllerException(e);
         }
     }
+
     @RequestMappingMethod(path = "/blocking")
-    public String showBlockingMessage(HttpServletRequest request) throws ControllerException{
+    public String showBlockingMessage(HttpServletRequest request) {
         HttpSession httpSession = request.getSession();
-        String uri = request.getRequestURI();
-        if(ValidURI.validURI(uri)){
-            httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,uri);
-        }
+        httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE, "/cafe/user/blocking");
         return ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_BLOCKING);
     }
+
     @RequestMappingMethod(path = "/authorization")
-    public String showAuthorizationMessage(HttpServletRequest request) throws ControllerException{
+    public String showAuthorizationMessage(HttpServletRequest request) {
         HttpSession httpSession = request.getSession();
-        String uri = request.getRequestURI();
-        if(ValidURI.validURI(uri)){
-            httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,uri);
-        }
+        httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE, "/cafe/user/authorization");
         return ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_AUTHORIZATION);
     }
 }

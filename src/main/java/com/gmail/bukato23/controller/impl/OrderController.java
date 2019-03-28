@@ -14,7 +14,6 @@ import com.gmail.bukato23.util.Validation;
 import com.gmail.bukato23.util.constant.*;
 import com.gmail.bukato23.util.property.ConfigurationManager;
 import com.gmail.bukato23.util.property.MessageManager;
-import com.gmail.bukato23.util.ValidURI;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -30,52 +29,50 @@ public class OrderController {
     private ProductService productService = ServiceFactory.getInstance().getProductService();
     private OrderService orderService = ServiceFactory.getInstance().getOrderService();
     private UserService userService = ServiceFactory.getInstance().getUserService();
+    private FormService formService = ServiceFactory.getInstance().getFormService();
 
     @RequestMappingMethod(path = "/addToCart")
     public String addToCart(HttpServletRequest request) throws ControllerException {
         try {
             HttpSession httpSession = request.getSession();
-            String uri = request.getRequestURI();
-            if(ValidURI.validURI(uri)){
-                httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,uri);
-            }
-            Map<Product, Integer> products = (Map<Product, Integer>) httpSession.getAttribute(ConstantAttributes.CART);
-            if (products == null) {
-                products = new HashMap<>();
-            }
-            Product product = productService.getByID(Integer.parseInt(request.getParameter(ConstantParametrs.PRODUCT_TO_CART)));
-            String amountStr = request.getParameter(ConstantParametrs.AMOUNT_OF_PRODUCT);
-
-            request.setAttribute(ConstantAttributes.ERROR_WRONG_AMOUNT, null);
-
-            MessageManager messageManager = MessageManager.defineLocale((String) httpSession.getAttribute(
-                    ConstantAttributes.CHANGE_LANGUAGE));
-
-            if (Validation.isCorrectAmount(amountStr)) {
-                int amount = Integer.parseInt(amountStr);
-                if (products.containsKey(product)) {
-                    products.computeIfPresent(product, (k, v) -> v + amount);
-                } else {
-                    products.put(product, amount);
+            int formId = (Integer) httpSession.getAttribute(ConstantParametrs.FORM_ID);
+            if (!formService.getById(formId)) {
+                Map<Product, Integer> products = (Map<Product, Integer>) httpSession.getAttribute(ConstantAttributes.CART);
+                if (products == null) {
+                    products = new HashMap<>();
                 }
-                httpSession.setAttribute(ConstantAttributes.CART, products);
-            } else {
-                request.setAttribute(ConstantAttributes.ERROR_WRONG_AMOUNT, messageManager
-                        .getMessage(ConstantMessages.PATH_ERROR_WRONG_AMOUNT));
+                Product product = productService.getByID(Integer.parseInt(request.getParameter(ConstantParametrs.PRODUCT_TO_CART)));
+                String amountStr = request.getParameter(ConstantParametrs.AMOUNT_OF_PRODUCT);
+
+                request.setAttribute(ConstantAttributes.ERROR_WRONG_AMOUNT, null);
+                MessageManager messageManager = MessageManager.defineLocale((String) httpSession.getAttribute(
+                        ConstantAttributes.CHANGE_LANGUAGE));
+
+                if (Validation.isCorrectAmount(amountStr)) {
+                    int amount = Integer.parseInt(amountStr);
+                    if (products.containsKey(product)) {
+                        products.computeIfPresent(product, (k, v) -> v + amount);
+                    } else {
+                        products.put(product, amount);
+                    }
+                    httpSession.setAttribute(ConstantAttributes.CART, products);
+                } else {
+                    request.setAttribute(ConstantAttributes.ERROR_WRONG_AMOUNT, messageManager
+                            .getMessage(ConstantMessages.PATH_ERROR_WRONG_AMOUNT));
+                }
+                formService.update(formId);
+                return "redirect " + ConstantURL.CART;
             }
-            return ConstantURL.MENU;
+            return "redirect " + ConstantURL.CART;
         } catch (ServiceException exc) {
             throw new ControllerException(exc);
         }
     }
 
     @RequestMappingMethod(path = "/cart")
-    public String showCart(HttpServletRequest request) throws ControllerException {
+    public String showCart(HttpServletRequest request) {
         HttpSession httpSession = request.getSession();
-        String uri = request.getRequestURI();
-        if(ValidURI.validURI(uri)){
-            httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,uri);
-        }
+        httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE, ConstantURL.CART);
         Map<Product, Integer> products = (Map<Product, Integer>) httpSession.getAttribute(ConstantAttributes.CART);
         httpSession.setAttribute(ConstantAttributes.TOTAL_PRICE, null);
         if (products != null) {
@@ -96,9 +93,11 @@ public class OrderController {
             HttpSession httpSession = request.getSession();
             Map<Product, Integer> products = (Map<Product, Integer>) httpSession.getAttribute(ConstantAttributes.CART);
             Product product = productService.getByID(Integer.parseInt(request.getParameter(ConstantParametrs.DELETE_PRODUCT)));
-            products.remove(product);
-            if (products.size() == 0) {
-                products = null;
+            if (products != null && products.containsKey(product)) {
+                products.remove(product);
+                if (products.size() == 0) {
+                    products = null;
+                }
             }
             httpSession.setAttribute(ConstantAttributes.CART, products);
             return "redirect " + ConstantURL.CART;
@@ -109,57 +108,66 @@ public class OrderController {
 
     @RequestMappingMethod(path = "/checkout")
     public String checkout(HttpServletRequest request) throws ControllerException {
-        HttpSession httpSession = request.getSession();
-        String uri = request.getRequestURI();
-        if(ValidURI.validURI(uri)){
-            httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,uri);
+        try {
+            HttpSession httpSession = request.getSession();
+            httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE, ConstantURL.CHECKOUT);
+            int formId = formService.createForm();
+            request.setAttribute(ConstantParametrs.FORM_ID, formId);
+            return ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_CHECKOUT);
+        } catch (ServiceException exc) {
+            throw new ControllerException(exc);
         }
-        return ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_CHECKOUT);
     }
 
     @RequestMappingMethod(path = "/orderForm")
     public String makeOrder(HttpServletRequest request) throws ControllerException {
         try {
-            HttpSession httpSession = request.getSession();
-            Map<Product, Integer> products = (Map<Product, Integer>) httpSession.getAttribute(ConstantAttributes.CART);
-            BigDecimal total = (BigDecimal) httpSession.getAttribute(ConstantAttributes.TOTAL_PRICE);
-            User user = (User) httpSession.getAttribute(ConstantAttributes.USER);
-            Timestamp timeOrder = new Timestamp(System.currentTimeMillis());
-            PaymentType paymentType = PaymentType.fromID(Integer.parseInt(request.getParameter(ConstantParametrs.PAYMENT_TYPE)));
-            DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
-            Date date = formatter.parse(request.getParameter(ConstantParametrs.TIME_RECEIPT));
-            Timestamp timeReceipt = new Timestamp(date.getTime());
-            boolean usePoints = Boolean.parseBoolean(request.getParameter(ConstantParametrs.USE_POINTS));
+            int formId = Integer.parseInt(request.getParameter(ConstantParametrs.FORM_ID));
+            if (!formService.getById(formId)) {
+                HttpSession httpSession = request.getSession();
+                Map<Product, Integer> products = (Map<Product, Integer>) httpSession.getAttribute(ConstantAttributes.CART);
+                BigDecimal total = (BigDecimal) httpSession.getAttribute(ConstantAttributes.TOTAL_PRICE);
+                User user = (User) httpSession.getAttribute(ConstantAttributes.USER);
+                Timestamp timeOrder = new Timestamp(System.currentTimeMillis());
+                PaymentType paymentType = PaymentType.fromID(Integer.parseInt(request.getParameter(ConstantParametrs.PAYMENT_TYPE)));
+                DateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm");
+                Date date = formatter.parse(request.getParameter(ConstantParametrs.TIME_RECEIPT));
+                Timestamp timeReceipt = new Timestamp(date.getTime());
+                boolean usePoints = Boolean.parseBoolean(request.getParameter(ConstantParametrs.USE_POINTS));
 
-            request.setAttribute(ConstantAttributes.ERROR_WRONG_TIME, null);
-            request.setAttribute(ConstantAttributes.ERROR_WRONG_PAYMENT_TYPE, null);
-            MessageManager messageManager = MessageManager.defineLocale((String) httpSession.getAttribute(
-                    ConstantAttributes.CHANGE_LANGUAGE));
-            String page = ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_CHECKOUT);
-            if (Validation.isCorrectTimeReciept(timeOrder, timeReceipt)) {
-                double factor = 1;
-                int points = user.getPointsLoyalty();
-                if (usePoints && points != 0) {
-                    factor = 1.0 * points / 100;
-                    user.setPointsLoyalty(0);
-                }
-                total = total.multiply(BigDecimal.valueOf(factor));
-                if (paymentType == PaymentType.ONLINE_ACCOUNT) {
-                    if (user.getAccount().compareTo(total) >= 0) {
-                        page = makeOrderCommon(httpSession, products, user, paymentType, total, timeOrder, timeReceipt);
-                    } else {
-                        request.setAttribute(ConstantAttributes.ERROR_WRONG_PAYMENT_TYPE, messageManager
-                                .getMessage(ConstantMessages.PATH_ERROR_WRONG_PAYMENT_TYPE));
+                request.setAttribute(ConstantAttributes.ERROR_WRONG_TIME, null);
+                request.setAttribute(ConstantAttributes.ERROR_WRONG_PAYMENT_TYPE, null);
+                MessageManager messageManager = MessageManager.defineLocale((String) httpSession.getAttribute(
+                        ConstantAttributes.CHANGE_LANGUAGE));
+                String page = ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_CHECKOUT);
+                if (Validation.isCorrectTimeReciept(timeOrder, timeReceipt)) {
+                    double factor = 1;
+                    int points = user.getPointsLoyalty();
+                    if (usePoints && points != 0) {
+                        factor = 1.0 * points / 100;
+                        user.setPointsLoyalty(0);
                     }
-                } else {
-                    page = makeOrderCommon(httpSession, products, user, paymentType, total, timeOrder, timeReceipt);
-                }
+                    total = total.multiply(BigDecimal.valueOf(factor));
+                    if (paymentType == PaymentType.ONLINE_ACCOUNT) {
+                        if (user.getAccount().compareTo(total) >= 0) {
+                            page = makeOrderCommon(httpSession, products, user, paymentType, total, timeOrder, timeReceipt);
+                            formService.update(formId);
+                        } else {
+                            request.setAttribute(ConstantAttributes.ERROR_WRONG_PAYMENT_TYPE, messageManager
+                                    .getMessage(ConstantMessages.PATH_ERROR_WRONG_PAYMENT_TYPE));
+                        }
+                    } else {
+                        page = makeOrderCommon(httpSession, products, user, paymentType, total, timeOrder, timeReceipt);
+                        formService.update(formId);
+                    }
 
-            } else {
-                request.setAttribute(ConstantAttributes.ERROR_WRONG_TIME, messageManager
-                        .getMessage(ConstantMessages.PATH_ERROR_WRONG_TIME));
+                } else {
+                    request.setAttribute(ConstantAttributes.ERROR_WRONG_TIME, messageManager
+                            .getMessage(ConstantMessages.PATH_ERROR_WRONG_TIME));
+                }
+                return page;
             }
-            return page;
+            return "redirect " + ConstantURL.PROFILE;
         } catch (ParseException | ServiceException e) {
             throw new ControllerException(e);
         }
@@ -188,27 +196,26 @@ public class OrderController {
         httpSession.setAttribute(ConstantAttributes.CART, null);
         httpSession.setAttribute(ConstantAttributes.TOTAL_PRICE, null);
         httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE, "/cafe/user/profile");
-        return "redirect /cafe/user/profile";
- //       return ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_PROFILE);
+        return "redirect " + ConstantURL.PROFILE;
     }
 
     @RequestMappingMethod(path = "/allOrders")
     public String showAllOders(HttpServletRequest request) throws ControllerException {
         try {
             HttpSession httpSession = request.getSession();
-            httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE, "/cafe/order/allOrders");
+            httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE, ConstantURL.ALL_ORDERS);
             List<Order> allOrders = orderService.getAll();
             List<User> userOrder = new ArrayList<>();
             for (Order order : allOrders) {
                 User user = userService.getByID(order.getUserId());
                 userOrder.add(user);
             }
-            List<Map<Product,Integer>> myProductsForOrders = new ArrayList<>();
-            for(Order order : allOrders){
-                Map<Product,Integer> productIntegerMap = orderService.getProductsByOrderId(order.getId());
+            List<Map<Product, Integer>> myProductsForOrders = new ArrayList<>();
+            for (Order order : allOrders) {
+                Map<Product, Integer> productIntegerMap = orderService.getProductsByOrderId(order.getId());
                 myProductsForOrders.add(productIntegerMap);
             }
-            request.setAttribute(ConstantAttributes.MY_PRODUCTS,myProductsForOrders);
+            request.setAttribute(ConstantAttributes.MY_PRODUCTS, myProductsForOrders);
             request.setAttribute(ConstantParametrs.ALL_ORDERS, allOrders);
             request.setAttribute(ConstantParametrs.USER_ODER, userOrder);
             return ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_ALL_ORDERS);
@@ -218,54 +225,52 @@ public class OrderController {
     }
 
     @RequestMappingMethod(path = "/editOrder")
-    public String editOrder(HttpServletRequest request) throws ControllerException{
+    public String editOrder(HttpServletRequest request) throws ControllerException {
         try {
             HttpSession httpSession = request.getSession();
-            String uri = request.getRequestURI();
-            if(ValidURI.validURI(uri)){
-                httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,uri);
-            }
             int orderId = Integer.parseInt(request.getParameter(ConstantAttributes.EDIT_ORDER));
             Order editOrder = orderService.getById(orderId);
             httpSession.setAttribute(ConstantAttributes.EDIT_ORDER, editOrder);
+            int formId = formService.createForm();
+            request.setAttribute(ConstantParametrs.FORM_ID, formId);
             return ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_EDIT_ORDER);
-        }
-        catch (ServiceException exc){
+        } catch (ServiceException exc) {
             throw new ControllerException(exc);
         }
     }
 
     @RequestMappingMethod(path = "/editOrderForm")
-    public String editOrderForm(HttpServletRequest request) throws ControllerException{
+    public String editOrderForm(HttpServletRequest request) throws ControllerException {
         try {
-            HttpSession httpSession = request.getSession();
-            httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE, "/cafe/order/allOrders");
-            Order order = (Order) httpSession.getAttribute(ConstantAttributes.EDIT_ORDER);
-            Status orderStatus = Status.fromID(Integer.parseInt(request.getParameter(ConstantParametrs.STATUS_ORDER)));
-            order.setStatus(orderStatus);
-            orderService.updateOrderByAdmin(order);
+            int formId = Integer.parseInt(request.getParameter(ConstantParametrs.FORM_ID));
+            if (!formService.getById(formId)) {
+                HttpSession httpSession = request.getSession();
+                Order order = (Order) httpSession.getAttribute(ConstantAttributes.EDIT_ORDER);
+                Status orderStatus = Status.fromID(Integer.parseInt(request.getParameter(ConstantParametrs.STATUS_ORDER)));
+                order.setStatus(orderStatus);
+                orderService.updateOrderByAdmin(order);
+                formService.update(formId);
+                return "redirect " + ConstantURL.ALL_ORDERS;
+            }
             return "redirect " + ConstantURL.ALL_ORDERS;
-        }
-        catch (ServiceException e){
+        } catch (ServiceException e) {
             throw new ControllerException(e);
         }
     }
+
     @RequestMappingMethod(path = "/myOrders")
-    public String showMyOrders(HttpServletRequest request) throws ControllerException{
+    public String showMyOrders(HttpServletRequest request) throws ControllerException {
         try {
             HttpSession httpSession = request.getSession();
-            String uri = request.getRequestURI();
-            if(ValidURI.validURI(uri)){
-                httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,uri);
-            }
+            httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE, ConstantURL.MY_ORDERS);
             User user = (User) httpSession.getAttribute(ConstantAttributes.USER);
-            List<Order>  myOrders = orderService.getByUserId(user.getId());
-            List<Map<Product,Integer>> myProductsForOrders = new ArrayList<>();
-            for(Order order : myOrders){
-                Map<Product,Integer> productIntegerMap = orderService.getProductsByOrderId(order.getId());
+            List<Order> myOrders = orderService.getByUserId(user.getId());
+            List<Map<Product, Integer>> myProductsForOrders = new ArrayList<>();
+            for (Order order : myOrders) {
+                Map<Product, Integer> productIntegerMap = orderService.getProductsByOrderId(order.getId());
                 myProductsForOrders.add(productIntegerMap);
             }
-            httpSession.setAttribute(ConstantAttributes.MY_PRODUCTS,myProductsForOrders);
+            httpSession.setAttribute(ConstantAttributes.MY_PRODUCTS, myProductsForOrders);
             httpSession.setAttribute(ConstantAttributes.MY_ORDERS, myOrders);
             return ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_MY_ORDERS);
         } catch (ServiceException e) {
@@ -274,34 +279,35 @@ public class OrderController {
     }
 
     @RequestMappingMethod(path = "/rateOrder")
-    public String rateOrder(HttpServletRequest request) throws ControllerException{
+    public String rateOrder(HttpServletRequest request) throws ControllerException {
         try {
             HttpSession httpSession = request.getSession();
-            String uri = request.getRequestURI();
-            if(ValidURI.validURI(uri)){
-                httpSession.setAttribute(ConstantAttributes.CURRENT_GET_PAGE,uri);
-            }
             int orderId = Integer.parseInt(request.getParameter(ConstantAttributes.RATE_ORDER));
             Order rateOrder = orderService.getById(orderId);
             httpSession.setAttribute(ConstantAttributes.RATE_ORDER, rateOrder);
+            int formId = formService.createForm();
+            request.setAttribute(ConstantParametrs.FORM_ID, formId);
             return ConfigurationManager.getProperty(ConstantPathPages.PATH_PAGE_RATE_ORDER);
-        }
-        catch (ServiceException exc){
+        } catch (ServiceException exc) {
             throw new ControllerException(exc);
         }
     }
 
     @RequestMappingMethod(path = "/rateOrderForm")
-    public String rateOrderForm(HttpServletRequest request) throws ControllerException{
+    public String rateOrderForm(HttpServletRequest request) throws ControllerException {
         try {
-            HttpSession httpSession = request.getSession();
-            Rating rating = Rating.fromID(Integer.parseInt(request.getParameter(ConstantParametrs.RATING_ORDER)));
-            Order  order =  (Order) httpSession.getAttribute(ConstantAttributes.RATE_ORDER);
-            order.setRating(rating);
-            orderService.updateOrderByAdmin(order);
+            int formId = Integer.parseInt(request.getParameter(ConstantParametrs.FORM_ID));
+            if (!formService.getById(formId)) {
+                HttpSession httpSession = request.getSession();
+                Rating rating = Rating.fromID(Integer.parseInt(request.getParameter(ConstantParametrs.RATING_ORDER)));
+                Order order = (Order) httpSession.getAttribute(ConstantAttributes.RATE_ORDER);
+                order.setRating(rating);
+                orderService.updateOrderByAdmin(order);
+                formService.update(formId);
+                return "redirect " + ConstantURL.MY_ORDERS;
+            }
             return "redirect " + ConstantURL.MY_ORDERS;
-        }
-        catch (ServiceException exc){
+        } catch (ServiceException exc) {
             throw new ControllerException(exc);
         }
     }

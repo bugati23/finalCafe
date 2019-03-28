@@ -20,7 +20,7 @@
 <form id="login" action="${pageContext.servletContext.contextPath}/cafe/user/editUserForm" method="post">
     <h1><fmt:message key="label.editUser"/></h1>
     <fieldset id="inputs">
-        <label><fmt:message key="label.changeAccount"/></label>
+        <label><fmt:message key="label.changeAccount"/>(BYN)</label>
         <input name="account" type="number" value="<c:out value="${editUser.account}"/>" placeholder="<fmt:message key="label.enterAccount"/>" min="0" step="0.01">
         <label style="color:#721c24">${errorWrongAccount}</label><br>
         <label><fmt:message key="label.changePointsLoyalty"/></label>
@@ -41,8 +41,6 @@
         <input id="submit" type="submit" value="<fmt:message key="label.change"/>"/>
     </fieldset>
     <a href="${pageContext.servletContext.contextPath}/cafe/user/deleteUser"><fmt:message key="label.delete"/> </a>
-    <a href="${pageContext.servletContext.contextPath}/cafe/user/langen"><img src="${pageContext.servletContext.contextPath}/assets/images/icons/icons8-great-britain-48.png"></a>
-    <a href="${pageContext.servletContext.contextPath}/cafe/user/langru"><img src="${pageContext.servletContext.contextPath}/assets/images/icons/icons8-russian-federation-48.png"></a>
 </form>
 </body>
 </html>

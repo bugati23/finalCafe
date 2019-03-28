@@ -63,7 +63,7 @@
                 <div class="profile-head">
                     <h5><c:out value="${user.login}"/></h5>
                     <h6><c:out value="${user.role}"/></h6>
-                    <p class="proile-rating"><fmt:message key="label.account"/> : <span><c:out value="${user.account}"/></span></p>
+                    <p class="proile-rating"><fmt:message key="label.account"/> : <span><c:out value="${user.account}(BYN)"/></span></p>
                 </div>
             </div>
             <div style="float: right">

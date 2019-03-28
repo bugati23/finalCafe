@@ -79,6 +79,7 @@
                         <button type="submit" class="btn3 flex-c-m size13 txt11 trans-0-4">
                             <fmt:message key="label.rate"/>
                         </button>
+                        <input type="hidden" name="formId" value="${formId}">
                     </div>
                 </form>
             </div>
